@@ -1,5 +1,4 @@
 import express from 'express';
-import { register } from 'module';
 
 const router = express.Router();
 
