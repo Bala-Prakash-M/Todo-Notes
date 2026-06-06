@@ -21,9 +21,7 @@ export class AuthMiddleware {
       }
 
       const payload = this.JwtUtils.verifyToken(token);
-
-      console.log("Authenticated user ID:", payload.userId);
-
+      
       req.user = payload;
 
       next();

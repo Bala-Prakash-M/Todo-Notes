@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./src/modules/auth/auth.routes.js";
+import todosRoutes from "./src/modules/todo/todo.routes.js";
 import { JwtUtils } from "./src/utils/jwt.js";
 import { AuthMiddleware } from "./src/middlewares/auth.middleware.js";
 
@@ -26,5 +27,6 @@ app.get('/test', authMiddleware.authenticate, async (req, res) => {
 })
 
 app.use('/api/auth', authRoutes);
+app.use('/api/todo', todosRoutes);
 
 export default app;
