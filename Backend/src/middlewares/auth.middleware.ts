@@ -6,7 +6,12 @@ export class AuthMiddleware {
 
   authenticate = (req: Request, res: Response, next: NextFunction): void => {
     try {
-      const authHeader: string | undefined = req.headers["authorization"];
+      const authHeader = req.headers["authorization"];
+      // TypeScript complains because a string[] might be returned, and string[] is not assignable to string.
+      if (typeof authHeader !== "string") {
+        res.status(401).json({ message: "Invalid authorization header" });
+        return;
+      }
 
       if (!authHeader) {
         res.status(401).json({ message: "Authorization header missing" });
@@ -21,12 +26,11 @@ export class AuthMiddleware {
       }
 
       const payload = this.JwtUtils.verifyToken(token);
-      
+
       req.user = payload;
 
       next();
     } catch (error: unknown) {
-
       if (error instanceof Error) {
         res.status(401).json({
           message: error.message || "Unauthorized",

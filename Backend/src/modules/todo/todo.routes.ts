@@ -17,4 +17,6 @@ router.use(authMiddleware.authenticate);
 // Define your todo routes here
 router.get("/", todoController.findAll);
 
+router.get("/:id", todoController.findById);
+
 export default router;

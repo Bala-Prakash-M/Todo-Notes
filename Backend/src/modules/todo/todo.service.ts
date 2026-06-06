@@ -17,4 +17,14 @@ export class TodoService {
 
   };
 
+  findById = async (
+    userId: string, 
+    todoId: string
+  ): Promise<Object | null> => {
+
+    return this.todoRepository.findById(
+      userId, todoId
+    );
+  }
+
 }

@@ -10,4 +10,13 @@ export class TodoRepository {
     });
   };
 
+  findById = async (userId: string, todoId: string): Promise<object | null> => {
+    return await prisma.todo.findFirst({
+      where: {
+        userId,
+        id: todoId
+      },
+    });
+  };
+
 }
