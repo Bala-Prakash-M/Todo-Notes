@@ -16,7 +16,7 @@ if (!JWT_SECRET) {
 }
 
 export class JwtUtils {
-  generateToken(payload: unknown): string {
+  generateToken = (payload: unknown): string => {
 
     const validPayload = AuthPayLoadSchema.safeParse(payload);
 
@@ -30,7 +30,7 @@ export class JwtUtils {
 
   }
 
-  verifyToken(token: string): AuthPayload {
+  verifyToken = (token: string): AuthPayload => {
 
     const decoded = jwt.verify(token, JWT_SECRET);
 

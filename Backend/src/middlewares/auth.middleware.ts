@@ -1,0 +1,40 @@
+import { Request, Response, NextFunction } from "express";
+import { JwtUtils } from "../utils/jwt.js";
+
+export class AuthMiddleware {
+  constructor(private readonly JwtUtils: JwtUtils) {}
+
+  authenticate = (req: Request, res: Response, next: NextFunction): void => {
+    try {
+      const authHeader: string | undefined = req.headers["authorization"];
+
+      if (!authHeader) {
+        res.status(401).json({ message: "Authorization header missing" });
+        return;
+      }
+
+      const [schema, token]: string[] = authHeader.split(" ");
+
+      if (schema !== "Bearer" || !token) {
+        res.status(401).json({ message: "Invalid authorization format" });
+        return;
+      }
+
+      const payload = this.JwtUtils.verifyToken(token);
+
+      console.log("Authenticated user ID:", payload.userId);
+
+      req.user = payload;
+
+      next();
+    } catch (error: unknown) {
+
+      if (error instanceof Error) {
+        res.status(401).json({
+          message: error.message || "Unauthorized",
+        });
+      }
+      return;
+    }
+  };
+}
