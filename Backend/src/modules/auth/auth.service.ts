@@ -1,10 +1,11 @@
 import type { RegisterDto, LoginDto } from "./auth.dto.js";
 import { UserRepository } from "../../repositories/user.repository.js";
 import { comparePasswords, hashPassword } from "../../utils/password.js";
+import { JwtUtils } from "../../utils/jwt.js";
 
 export class AuthService {
 
-  constructor(private readonly UserRepository: UserRepository) {}
+  constructor(private readonly UserRepository: UserRepository, private readonly JwtUtils: JwtUtils) {}
 
   async register(user: RegisterDto) {
     try {
@@ -25,7 +26,10 @@ export class AuthService {
       // Create new user
       const newUser = await this.UserRepository.createUser(user);
 
-      return newUser;
+      // Generate JWT token
+      const token = this.JwtUtils.generateToken({ userId: newUser.id });
+
+      return { ...newUser, token };
 
     } catch(error: unknown) {
       throw new Error((error as Error).message);
@@ -47,7 +51,10 @@ export class AuthService {
         throw new Error("Invalid password");
       }
 
-      return user;
+      // Generate JWT token
+      const token = this.JwtUtils.generateToken({ userId: user.id });
+
+      return { ...user, token };
 
     } catch(error: unknown) {
       throw new Error((error as Error).message);
