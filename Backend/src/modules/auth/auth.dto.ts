@@ -1,10 +1,8 @@
-export interface RegisterDto {
-  name: string;
-  email: string;
-  password: string;
-}
+import { z } from "zod";
+import { RegisterSchema, LoginSchema } from "./auth.schema.js";
 
-export interface LoginDto {
-  email: string;
-  password: string;
-}
+export type RegisterDto = 
+  z.infer<typeof RegisterSchema>;
+
+export type LoginDto = 
+  z.infer<typeof LoginSchema>;
