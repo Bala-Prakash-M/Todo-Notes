@@ -1,5 +1,6 @@
-import { Todo } from "../../config/generated/prisma/client.js";
+import type { Todo } from "../../config/generated/prisma/client.js";
 import { TodoRepository } from "../../repositories/todo.repository.js";
+import { AppError } from "../../utils/app-error.js";
 import { CreateTodoDto } from "./todo.dto.js"
 
 export class TodoService {
@@ -25,7 +26,8 @@ export class TodoService {
   ): Promise<Todo | null> => {
 
     return this.todoRepository.findById(
-      userId, todoId
+      userId, 
+      todoId
     );
   }
 
@@ -34,8 +36,39 @@ export class TodoService {
     userId: string
   ): Promise<Todo> => {
 
-    return this.todoRepository.createTodo(userId, todo.title);
+    return this.todoRepository.createTodo(
+      userId, 
+      todo.title
+    );
 
+  }
+
+  updateTodo = async (
+    id: string,
+    userId: string,
+    title: string,
+    completed: boolean
+  ): Promise<Todo> => {
+    return await this.todoRepository.updateTodo(
+      id,
+      userId,
+      title,
+      completed
+    );
+  }
+
+  deleteTodo = async (
+    id: string,
+    userId: string
+  ): Promise<void> => {
+    const deletedCount = await this.todoRepository.deleteTodo(
+      id,
+      userId,
+    );
+
+    if (deletedCount === 0) {
+      throw new AppError(404, "Todo not found");
+    }
   }
 
 }

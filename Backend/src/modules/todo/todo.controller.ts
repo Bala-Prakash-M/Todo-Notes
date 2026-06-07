@@ -1,8 +1,7 @@
 import { Response, Request } from "express";
-import { string, ZodError } from "zod";
 import { TodoService } from "./todo.service.js";
-import { CreateTodoDto } from "./todo.dto.js";
-import { CreateTodoSchema } from "./todo.schema.js";
+import { TodoDto, CreateTodoDto, UpdateTodoDto } from "./todo.dto.js";
+import { TodoSchema, CreateTodoSchema, UpdateTodoSchema } from "./todo.schema.js";
 import { ErrorHandler } from "../../utils/error.handler.js";
 
 type TodoParams = {
@@ -14,27 +13,6 @@ export class TodoController {
     private readonly todoService: TodoService,
     private readonly errorHandler: ErrorHandler,
   ) {}
-
-  // private static handleError = (res: Response, error: unknown) => {
-  //   if (error instanceof ZodError) {
-  //     res.status(400).json({
-  //       message: error.issues,
-  //     });
-
-  //     return;
-  //   }
-
-  //   if (error instanceof Error) {
-  //     res.status(500).json({
-  //       message: "Internal server error",
-  //     });
-  //     return;
-  //   }
-
-  //   res.status(500).json({
-  //     message: "Internal server error",
-  //   });
-  // }
 
   findAll = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -111,4 +89,74 @@ export class TodoController {
       ErrorHandler.handleError(res, error);
     }
   };
+
+  updateTodo = async (req: Request<TodoParams>, res: Response): Promise<void> => {
+    try {
+
+      if (!req.user) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+
+        return;
+      }
+
+      const id: string = req.params.id;
+      const userId = req.user.userId;
+      const updatingDetails: UpdateTodoDto = UpdateTodoSchema.parse(req.body);
+
+      const updatedTodo: TodoDto = await 
+        this.todoService.updateTodo(
+          id,
+          userId,
+          updatingDetails.title, 
+          updatingDetails.completed
+        );
+
+      res.status(200).json({
+        data: updatedTodo,
+      });
+
+      return;
+
+    } catch (error: unknown) {
+      ErrorHandler.handleError(res, error);
+    }
+  }
+
+  deleteTodo = async (req: Request<TodoParams>, res: Response): Promise<void> => {
+    try {
+
+      if (!req.user) {
+        res.status(401).json({
+          message: "Unauthorized",
+        });
+
+        return;
+      }
+
+      const userId = req.user.userId;
+      const id: string = (req.params.id);
+
+      if (!id) {
+        res.status(400).json({
+          message: "id not found",
+        });
+
+        return;
+      }
+
+      await this.todoService.deleteTodo(
+        id, 
+        userId
+      );
+
+      res.status(204).send();
+
+      return;
+
+    } catch (error: unknown) {
+      ErrorHandler.handleError(res, error);
+    }
+  }
 }

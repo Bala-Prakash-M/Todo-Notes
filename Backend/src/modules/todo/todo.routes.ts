@@ -8,7 +8,9 @@ import { ErrorHandler } from "../../utils/error.handler.js";
 
 const router = express.Router();
 
-const authMiddleware = new AuthMiddleware(new JwtUtils());
+const authMiddleware = new AuthMiddleware(
+  new JwtUtils()
+);
 
 const todoController = new TodoController(
   new TodoService(
@@ -25,5 +27,9 @@ router.get("/", todoController.findAll);
 router.get("/:id", todoController.findById);
 
 router.post('/', todoController.createTodo);
+
+router.put('/:id', todoController.updateTodo);
+
+router.delete('/:id', todoController.deleteTodo);
 
 export default router;
