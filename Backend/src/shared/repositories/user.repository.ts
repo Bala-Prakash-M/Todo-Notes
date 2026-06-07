@@ -1,5 +1,5 @@
-import { prisma } from "../lib/prisma.js";
-import type { RegisterDto } from "../modules/auth/auth.dto.js";
+import { prisma } from "../../lib/prisma.js";
+import type { RegisterDto } from "../../modules/auth/auth.dto.js";
 
 export class UserRepository {
 

@@ -1,6 +1,6 @@
 import type { Todo } from "../../config/generated/prisma/client.js";
-import { TodoRepository } from "../../repositories/todo.repository.js";
-import { AppError } from "../../utils/app-error.js";
+import { TodoRepository } from "../../shared/repositories/todo.repository.js";
+import { AppError } from "../../shared/errors/app-error.js";
 import { CreateTodoDto } from "./todo.dto.js"
 
 export class TodoService {

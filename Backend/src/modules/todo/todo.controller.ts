@@ -2,7 +2,7 @@ import { Response, Request } from "express";
 import { TodoService } from "./todo.service.js";
 import { TodoDto, CreateTodoDto, UpdateTodoDto } from "./todo.dto.js";
 import { TodoSchema, CreateTodoSchema, UpdateTodoSchema } from "./todo.schema.js";
-import { ErrorHandler } from "../../utils/error.handler.js";
+import { ErrorHandler } from "../../shared/errors/error.handler.js";
 
 type TodoParams = {
   id: string;

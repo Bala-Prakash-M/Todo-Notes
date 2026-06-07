@@ -1,16 +1,15 @@
-import { Response } from 'express';
-import { Prisma } from "../config/generated/prisma/client.js";
-import { ZodError } from 'zod';
+import { Response } from "express";
+import { Prisma } from "../../config/generated/prisma/client.js";
+import { ZodError } from "zod";
 import { AppError } from "./app-error.js";
 
 export class ErrorHandler {
-
   static handleError = (res: Response, error: unknown) => {
     if (error instanceof ZodError) {
       res.status(400).json({
         message: error.issues,
       });
-  
+
       return;
     }
 
@@ -23,9 +22,10 @@ export class ErrorHandler {
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2025") {
-        const modelName = typeof error.meta?.modelName === "string"
-          ? error.meta.modelName
-          : "Resource";
+        const modelName =
+          typeof error.meta?.modelName === "string"
+            ? error.meta.modelName
+            : "Resource";
 
         res.status(404).json({
           message: `${modelName} not found`,
@@ -55,5 +55,5 @@ export class ErrorHandler {
     });
 
     return;
-  }
+  };
 }

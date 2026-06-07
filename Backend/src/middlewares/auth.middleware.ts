@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { JwtUtils } from "../utils/jwt.js";
+import { JwtUtils } from "../shared/utils/jwt.js";
 
 export class AuthMiddleware {
   constructor(private readonly JwtUtils: JwtUtils) {}

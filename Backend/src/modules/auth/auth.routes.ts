@@ -1,9 +1,9 @@
 import express from "express";
 import { AuthController } from "./auth.controller.js";
 import { AuthService } from "./auth.service.js";
-import { UserRepository } from "../../repositories/user.repository.js";
-import { JwtUtils } from "../../utils/jwt.js";
-import { ErrorHandler } from "../../utils/error.handler.js";
+import { UserRepository } from "../../shared/repositories/user.repository.js";
+import { JwtUtils } from "../../shared/utils/jwt.js";
+import { ErrorHandler } from "../../shared/errors/error.handler.js";
 
 const router = express.Router();
 

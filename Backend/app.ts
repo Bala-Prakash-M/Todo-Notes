@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./src/modules/auth/auth.routes.js";
 import todosRoutes from "./src/modules/todo/todo.routes.js";
-import { JwtUtils } from "./src/utils/jwt.js";
+import { JwtUtils } from "./src/shared/utils/jwt.js";
 import { AuthMiddleware } from "./src/middlewares/auth.middleware.js";
 
 const app = express();

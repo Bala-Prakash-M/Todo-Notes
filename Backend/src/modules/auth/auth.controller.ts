@@ -1,9 +1,8 @@
 import type { Request, Response } from "express";
-import { ZodError } from "zod";
 import { AuthService } from "./auth.service.js";
 import type { RegisterDto, LoginDto } from "./auth.dto.js";
 import { RegisterSchema, LoginSchema } from "./auth.schema.js";
-import { ErrorHandler } from "../../utils/error.handler.js";
+import { ErrorHandler } from "../../shared/errors/error.handler.js";
 
 export class AuthController {
   constructor(private readonly authService: AuthService, private readonly errorHandler: ErrorHandler) {}

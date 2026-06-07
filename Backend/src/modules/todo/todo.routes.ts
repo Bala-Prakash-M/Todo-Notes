@@ -1,10 +1,10 @@
 import express from "express";
 import { AuthMiddleware } from "../../middlewares/auth.middleware.js";
-import { JwtUtils } from "../../utils/jwt.js";
+import { JwtUtils } from "../../shared/utils/jwt.js";
 import { TodoController } from "./todo.controller.js";
 import { TodoService } from "./todo.service.js";
-import { TodoRepository } from "../../repositories/todo.repository.js";
-import { ErrorHandler } from "../../utils/error.handler.js";
+import { TodoRepository } from "../../shared/repositories/todo.repository.js";
+import { ErrorHandler } from "../../shared/errors/error.handler.js";
 
 const router = express.Router();
 

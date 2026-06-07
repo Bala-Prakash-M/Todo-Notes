@@ -1,7 +1,7 @@
 import type { RegisterDto, LoginDto } from "./auth.dto.js";
-import { UserRepository } from "../../repositories/user.repository.js";
-import { comparePasswords, hashPassword } from "../../utils/password.js";
-import { JwtUtils } from "../../utils/jwt.js";
+import { UserRepository } from "../../shared/repositories/user.repository.js";
+import { comparePasswords, hashPassword } from "../../shared/utils/password.js";
+import { JwtUtils } from "../../shared/utils/jwt.js";
 
 export class AuthService {
 
