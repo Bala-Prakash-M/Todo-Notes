@@ -8,16 +8,16 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  password  String
-  name      String?
+  id          String    @id @default(cuid())
+  email       String    @unique
+  password    String
+  name        String?
 
-  todos     Todo[]
-  notes     Note[]
+  todos       Todo[]
+  notebooks   Notebook[]
   
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt  
 }
 
 model Todo {
@@ -32,13 +32,27 @@ model Todo {
   updatedAt   DateTime  @updatedAt
 }
 
-model Note {
+model Notebook {
   id          String      @id @default(cuid())
-  title       String
-  content     String
+  name        String
 
   userId      String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  notes       Note[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Note {
+  id          String      @id @default(cuid())
+
+  title       String
+  content     String
+
+  noteBookId  String
+  noteBook    Notebook  @relation(fields: [noteBookId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt

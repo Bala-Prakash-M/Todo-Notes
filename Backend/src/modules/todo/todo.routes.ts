@@ -15,8 +15,8 @@ const authMiddleware = new AuthMiddleware(
 const todoController = new TodoController(
   new TodoService(
     new TodoRepository()
-  ), 
-  new ErrorHandler()
+  )
+  // new ErrorHandler()
 );
 
 router.use(authMiddleware.authenticate);

@@ -11,7 +11,7 @@ type TodoParams = {
 export class TodoController {
   constructor(
     private readonly todoService: TodoService,
-    private readonly errorHandler: ErrorHandler,
+    // private readonly errorHandler: ErrorHandler,
   ) {}
 
   findAll = async (req: Request, res: Response): Promise<void> => {
