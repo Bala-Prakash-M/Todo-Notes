@@ -58,4 +58,19 @@ export class NotebookService {
       name,
     );
   }
+
+  update = (id: string, userId: string, name: string) => {
+    return this.notebookRepository.update(id, userId, name);
+  }
+
+  delete = async (id: string, userId: string) => {
+    const deletedCount = await this.notebookRepository.delete(
+      id,
+      userId
+    );
+
+     if (deletedCount === 0) {
+      throw new AppError(404, "Todo not found");
+    }
+  }
 }

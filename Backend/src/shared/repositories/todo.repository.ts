@@ -35,20 +35,11 @@ export class TodoRepository {
     title: string,
     completed: boolean,
   ): Promise<Todo> => {
-    const todo = await prisma.todo.findFirst({
-      where: {
-        id,
-        userId,
-      },
-    });
-
-    if (!todo) {
-      throw new AppError(404, "Todo not found");
-    }
 
     return prisma.todo.update({
       where: {
-        id: todo.id,
+        id,
+        userId
       },
       data: {
         title,

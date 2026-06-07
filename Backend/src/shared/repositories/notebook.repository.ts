@@ -55,4 +55,27 @@ export class NotebookRepository {
       }
     });
   }
+
+  update = (id: string, userId: string, name: string) => {
+
+    return prisma.notebook.update({
+      where:{
+        id,
+        userId
+      },
+      data: {
+        name
+      }
+    });
+  }
+
+  delete = async (id: string, userId: string) => {
+    const result = await prisma.notebook.deleteMany({
+      where: {
+        id,
+        userId
+      }
+    });
+    return result.count;
+  }
 }
