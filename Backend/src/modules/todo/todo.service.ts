@@ -1,4 +1,6 @@
+import { Todo } from "../../config/generated/prisma/client.js";
 import { TodoRepository } from "../../repositories/todo.repository.js";
+import { CreateTodoDto } from "./todo.dto.js"
 
 export class TodoService {
 
@@ -9,7 +11,7 @@ export class TodoService {
 
   findAll = async (
     userId: string
-  ): Promise<object[]> => {
+  ): Promise<Todo[]> => {
 
     return this.todoRepository.findAll(
       userId
@@ -20,11 +22,20 @@ export class TodoService {
   findById = async (
     userId: string, 
     todoId: string
-  ): Promise<Object | null> => {
+  ): Promise<Todo | null> => {
 
     return this.todoRepository.findById(
       userId, todoId
     );
+  }
+
+  createTodo =  (
+    todo: CreateTodoDto, 
+    userId: string
+  ): Promise<Todo> => {
+
+    return this.todoRepository.createTodo(userId, todo.title);
+
   }
 
 }

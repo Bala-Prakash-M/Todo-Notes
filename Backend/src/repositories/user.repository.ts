@@ -17,20 +17,20 @@ export class UserRepository {
     }
   }
   
-    createUser = async (user: RegisterDto) => {
-    try {
-  
-      const newUser = await prisma.user.create({
-        data: {
-          name: user.name,
-          email: user.email,
-          password: user.password
-        }
-      })
-      return newUser;
-    } catch (error) {
-      throw new Error("Error creating user: " + error);
-    }
+  createUser = async (user: RegisterDto) => {
+  try {
+
+    const newUser = await prisma.user.create({
+      data: {
+        name: user.name,
+        email: user.email,
+        password: user.password
+      }
+    })
+    return newUser;
+  } catch (error) {
+    throw new Error("Error creating user: " + error);
+  }
   }
 }
 

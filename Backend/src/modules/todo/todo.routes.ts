@@ -4,12 +4,17 @@ import { JwtUtils } from "../../utils/jwt.js";
 import { TodoController } from "./todo.controller.js";
 import { TodoService } from "./todo.service.js";
 import { TodoRepository } from "../../repositories/todo.repository.js";
+import { ErrorHandler } from "../../utils/error.handler.js";
 
 const router = express.Router();
 
 const authMiddleware = new AuthMiddleware(new JwtUtils());
+
 const todoController = new TodoController(
-  new TodoService(new TodoRepository()),
+  new TodoService(
+    new TodoRepository()
+  ), 
+  new ErrorHandler()
 );
 
 router.use(authMiddleware.authenticate);
@@ -18,5 +23,7 @@ router.use(authMiddleware.authenticate);
 router.get("/", todoController.findAll);
 
 router.get("/:id", todoController.findById);
+
+router.post('/', todoController.createTodo);
 
 export default router;

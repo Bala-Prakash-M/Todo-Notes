@@ -3,9 +3,10 @@ import { ZodError } from "zod";
 import { AuthService } from "./auth.service.js";
 import type { RegisterDto, LoginDto } from "./auth.dto.js";
 import { RegisterSchema, LoginSchema } from "./auth.schema.js";
+import { ErrorHandler } from "../../utils/error.handler.js";
 
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly errorHandler: ErrorHandler) {}
 
   register = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -15,18 +16,7 @@ export class AuthController {
 
       res.status(201).json(newUser);
     } catch (error: unknown) {
-      if (error instanceof ZodError) {
-        res.status(400).json({
-          errors: error.issues,
-        });
-      }
-
-      if (error instanceof Error) {
-        res.status(400).json({
-          message: error.message,
-        });
-      }
-      return;
+      ErrorHandler.handleError(res, error);
     }
   };
 
@@ -38,23 +28,7 @@ export class AuthController {
 
       res.status(200).json({ message: "Login successful", user });
     } catch (error: unknown) {
-      if (error instanceof ZodError) {
-        res.status(400).json({
-          errors: error.issues,
-        });
-        return;
-      }
-
-      if (error instanceof Error) {
-        res.status(400).json({
-          message: error.message,
-        });
-        return;
-      }
-
-      res.status(500).json({
-        message: "Unknown error",
-      });
+      ErrorHandler.handleError(res, error);
     }
   };
 }
