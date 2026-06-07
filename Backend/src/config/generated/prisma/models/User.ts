@@ -191,7 +191,7 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   todos?: Prisma.TodoListRelationFilter
-  notes?: Prisma.NoteListRelationFilter
+  notebooks?: Prisma.NotebookListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -202,7 +202,7 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   todos?: Prisma.TodoOrderByRelationAggregateInput
-  notes?: Prisma.NoteOrderByRelationAggregateInput
+  notebooks?: Prisma.NotebookOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -216,7 +216,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   todos?: Prisma.TodoListRelationFilter
-  notes?: Prisma.NoteListRelationFilter
+  notebooks?: Prisma.NotebookListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -251,7 +251,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   todos?: Prisma.TodoCreateNestedManyWithoutUserInput
-  notes?: Prisma.NoteCreateNestedManyWithoutUserInput
+  notebooks?: Prisma.NotebookCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -262,7 +262,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   todos?: Prisma.TodoUncheckedCreateNestedManyWithoutUserInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
+  notebooks?: Prisma.NotebookUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -273,7 +273,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   todos?: Prisma.TodoUpdateManyWithoutUserNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
+  notebooks?: Prisma.NotebookUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -284,7 +284,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   todos?: Prisma.TodoUncheckedUpdateManyWithoutUserNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
+  notebooks?: Prisma.NotebookUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -372,18 +372,18 @@ export type UserUpdateOneRequiredWithoutTodosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTodosInput, Prisma.UserUpdateWithoutTodosInput>, Prisma.UserUncheckedUpdateWithoutTodosInput>
 }
 
-export type UserCreateNestedOneWithoutNotesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutNotesInput, Prisma.UserUncheckedCreateWithoutNotesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotesInput
+export type UserCreateNestedOneWithoutNotebooksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNotebooksInput, Prisma.UserUncheckedCreateWithoutNotebooksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotebooksInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutNotesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutNotesInput, Prisma.UserUncheckedCreateWithoutNotesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotesInput
-  upsert?: Prisma.UserUpsertWithoutNotesInput
+export type UserUpdateOneRequiredWithoutNotebooksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNotebooksInput, Prisma.UserUncheckedCreateWithoutNotebooksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotebooksInput
+  upsert?: Prisma.UserUpsertWithoutNotebooksInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotesInput, Prisma.UserUpdateWithoutNotesInput>, Prisma.UserUncheckedUpdateWithoutNotesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotebooksInput, Prisma.UserUpdateWithoutNotebooksInput>, Prisma.UserUncheckedUpdateWithoutNotebooksInput>
 }
 
 export type UserCreateWithoutTodosInput = {
@@ -393,7 +393,7 @@ export type UserCreateWithoutTodosInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  notes?: Prisma.NoteCreateNestedManyWithoutUserInput
+  notebooks?: Prisma.NotebookCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTodosInput = {
@@ -403,7 +403,7 @@ export type UserUncheckedCreateWithoutTodosInput = {
   name?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
+  notebooks?: Prisma.NotebookUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTodosInput = {
@@ -429,7 +429,7 @@ export type UserUpdateWithoutTodosInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
+  notebooks?: Prisma.NotebookUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTodosInput = {
@@ -439,10 +439,10 @@ export type UserUncheckedUpdateWithoutTodosInput = {
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
+  notebooks?: Prisma.NotebookUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutNotesInput = {
+export type UserCreateWithoutNotebooksInput = {
   id?: string
   email: string
   password: string
@@ -452,7 +452,7 @@ export type UserCreateWithoutNotesInput = {
   todos?: Prisma.TodoCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutNotesInput = {
+export type UserUncheckedCreateWithoutNotebooksInput = {
   id?: string
   email: string
   password: string
@@ -462,23 +462,23 @@ export type UserUncheckedCreateWithoutNotesInput = {
   todos?: Prisma.TodoUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutNotesInput = {
+export type UserCreateOrConnectWithoutNotebooksInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutNotesInput, Prisma.UserUncheckedCreateWithoutNotesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNotebooksInput, Prisma.UserUncheckedCreateWithoutNotebooksInput>
 }
 
-export type UserUpsertWithoutNotesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutNotesInput, Prisma.UserUncheckedUpdateWithoutNotesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutNotesInput, Prisma.UserUncheckedCreateWithoutNotesInput>
+export type UserUpsertWithoutNotebooksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutNotebooksInput, Prisma.UserUncheckedUpdateWithoutNotebooksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNotebooksInput, Prisma.UserUncheckedCreateWithoutNotebooksInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutNotesInput = {
+export type UserUpdateToOneWithWhereWithoutNotebooksInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutNotesInput, Prisma.UserUncheckedUpdateWithoutNotesInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutNotebooksInput, Prisma.UserUncheckedUpdateWithoutNotebooksInput>
 }
 
-export type UserUpdateWithoutNotesInput = {
+export type UserUpdateWithoutNotebooksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
@@ -488,7 +488,7 @@ export type UserUpdateWithoutNotesInput = {
   todos?: Prisma.TodoUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutNotesInput = {
+export type UserUncheckedUpdateWithoutNotebooksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
@@ -505,12 +505,12 @@ export type UserUncheckedUpdateWithoutNotesInput = {
 
 export type UserCountOutputType = {
   todos: number
-  notes: number
+  notebooks: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   todos?: boolean | UserCountOutputTypeCountTodosArgs
-  notes?: boolean | UserCountOutputTypeCountNotesArgs
+  notebooks?: boolean | UserCountOutputTypeCountNotebooksArgs
 }
 
 /**
@@ -533,8 +533,8 @@ export type UserCountOutputTypeCountTodosArgs<ExtArgs extends runtime.Types.Exte
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.NoteWhereInput
+export type UserCountOutputTypeCountNotebooksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotebookWhereInput
 }
 
 
@@ -546,7 +546,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   todos?: boolean | Prisma.User$todosArgs<ExtArgs>
-  notes?: boolean | Prisma.User$notesArgs<ExtArgs>
+  notebooks?: boolean | Prisma.User$notebooksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -580,7 +580,7 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "password" | "name" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   todos?: boolean | Prisma.User$todosArgs<ExtArgs>
-  notes?: boolean | Prisma.User$notesArgs<ExtArgs>
+  notebooks?: boolean | Prisma.User$notebooksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -590,7 +590,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     todos: Prisma.$TodoPayload<ExtArgs>[]
-    notes: Prisma.$NotePayload<ExtArgs>[]
+    notebooks: Prisma.$NotebookPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -994,7 +994,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   todos<T extends Prisma.User$todosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$todosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TodoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  notes<T extends Prisma.User$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notebooks<T extends Prisma.User$notebooksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notebooksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotebookPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1447,27 +1447,27 @@ export type User$todosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
 }
 
 /**
- * User.notes
+ * User.notebooks
  */
-export type User$notesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$notebooksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Note
+   * Select specific fields to fetch from the Notebook
    */
-  select?: Prisma.NoteSelect<ExtArgs> | null
+  select?: Prisma.NotebookSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Note
+   * Omit specific fields from the Notebook
    */
-  omit?: Prisma.NoteOmit<ExtArgs> | null
+  omit?: Prisma.NotebookOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.NoteInclude<ExtArgs> | null
-  where?: Prisma.NoteWhereInput
-  orderBy?: Prisma.NoteOrderByWithRelationInput | Prisma.NoteOrderByWithRelationInput[]
-  cursor?: Prisma.NoteWhereUniqueInput
+  include?: Prisma.NotebookInclude<ExtArgs> | null
+  where?: Prisma.NotebookWhereInput
+  orderBy?: Prisma.NotebookOrderByWithRelationInput | Prisma.NotebookOrderByWithRelationInput[]
+  cursor?: Prisma.NotebookWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.NoteScalarFieldEnum | Prisma.NoteScalarFieldEnum[]
+  distinct?: Prisma.NotebookScalarFieldEnum | Prisma.NotebookScalarFieldEnum[]
 }
 
 /**

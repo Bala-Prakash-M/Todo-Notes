@@ -386,6 +386,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   User: 'User',
   Todo: 'Todo',
+  Notebook: 'Notebook',
   Note: 'Note'
 } as const
 
@@ -402,7 +403,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "todo" | "note"
+    modelProps: "user" | "todo" | "notebook" | "note"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -554,6 +555,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Notebook: {
+      payload: Prisma.$NotebookPayload<ExtArgs>
+      fields: Prisma.NotebookFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NotebookFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NotebookFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload>
+        }
+        findFirst: {
+          args: Prisma.NotebookFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NotebookFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload>
+        }
+        findMany: {
+          args: Prisma.NotebookFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload>[]
+        }
+        create: {
+          args: Prisma.NotebookCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload>
+        }
+        createMany: {
+          args: Prisma.NotebookCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NotebookCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload>[]
+        }
+        delete: {
+          args: Prisma.NotebookDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload>
+        }
+        update: {
+          args: Prisma.NotebookUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload>
+        }
+        deleteMany: {
+          args: Prisma.NotebookDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NotebookUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NotebookUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload>[]
+        }
+        upsert: {
+          args: Prisma.NotebookUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotebookPayload>
+        }
+        aggregate: {
+          args: Prisma.NotebookAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotebook>
+        }
+        groupBy: {
+          args: Prisma.NotebookGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotebookGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NotebookCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotebookCountAggregateOutputType> | number
+        }
+      }
+    }
     Note: {
       payload: Prisma.$NotePayload<ExtArgs>
       fields: Prisma.NoteFieldRefs
@@ -691,11 +766,22 @@ export const TodoScalarFieldEnum = {
 export type TodoScalarFieldEnum = (typeof TodoScalarFieldEnum)[keyof typeof TodoScalarFieldEnum]
 
 
+export const NotebookScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotebookScalarFieldEnum = (typeof NotebookScalarFieldEnum)[keyof typeof NotebookScalarFieldEnum]
+
+
 export const NoteScalarFieldEnum = {
   id: 'id',
   title: 'title',
   content: 'content',
-  userId: 'userId',
+  noteBookId: 'noteBookId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -893,6 +979,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   todo?: Prisma.TodoOmit
+  notebook?: Prisma.NotebookOmit
   note?: Prisma.NoteOmit
 }
 

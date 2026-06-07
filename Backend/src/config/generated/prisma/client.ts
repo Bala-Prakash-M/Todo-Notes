@@ -52,6 +52,11 @@ export type User = Prisma.UserModel
  */
 export type Todo = Prisma.TodoModel
 /**
+ * Model Notebook
+ * 
+ */
+export type Notebook = Prisma.NotebookModel
+/**
  * Model Note
  * 
  */
