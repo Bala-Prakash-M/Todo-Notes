@@ -39,6 +39,14 @@ export class ErrorHandler {
         });
         return;
       }
+
+      if (error.code === "P2003") {
+        res.status(400).json({
+          message: "Referenced resource does not exist",
+        });
+
+        return;
+      }
     }
 
     if (error instanceof Error) {

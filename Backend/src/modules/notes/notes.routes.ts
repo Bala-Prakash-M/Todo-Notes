@@ -21,6 +21,14 @@ const notesController = new NotesController(
 
 router.use(authMiddleware.authenticate);
 
-router.get('/', notesController.getAll);
+router.get('/:notebookId', notesController.getAll);
+
+router.get('/:notebookId/:id', notesController.getById);
+
+router.post('/:notebookId', notesController.create);
+
+router.delete('/:notebookId/:id', notesController.delete);
+
+router.put('/:notebookId/:id', notesController.update);
 
 export default router;

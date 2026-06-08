@@ -1,4 +1,6 @@
 import { z }  from 'zod';
-import { NotebookIdSchema } from './notes.schema.js';
+import { idSchema, noteSchema } from './notes.schema.js';
 
-export type NotebookIdDto = z.infer<typeof NotebookIdSchema>;
+export type idDto = z.infer<typeof idSchema>;
+
+export type notesDto = z.infer<typeof noteSchema>;
