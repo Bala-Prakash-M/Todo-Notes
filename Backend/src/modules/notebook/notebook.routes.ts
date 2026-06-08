@@ -28,4 +28,8 @@ router.get('/name/:name', notebookController.getByName);
 
 router.post('/', notebookController.create);
 
+router.put('/:id', notebookController.update);
+
+router.delete('/:id', notebookController.delete);
+
 export default router;
