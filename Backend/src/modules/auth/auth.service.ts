@@ -29,7 +29,14 @@ export class AuthService {
       // Generate JWT token
       const token = this.JwtUtils.generateToken({ userId: newUser.id });
 
-      return { ...newUser, token };
+      return {
+        token,
+        user: {
+          id: newUser.id,
+          email: newUser.email,
+          name: newUser.name,
+        },
+      };
 
     } catch(error: unknown) {
       throw new Error((error as Error).message);
@@ -54,7 +61,14 @@ export class AuthService {
       // Generate JWT token
       const token = this.JwtUtils.generateToken({ userId: user.id });
 
-      return { ...user, token };
+      return {
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        },
+      };
 
     } catch(error: unknown) {
       throw new Error((error as Error).message);

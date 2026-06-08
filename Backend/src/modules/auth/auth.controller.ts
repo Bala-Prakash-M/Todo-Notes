@@ -25,7 +25,8 @@ export class AuthController {
 
       const user = await this.authService.login(credentials);
 
-      res.status(200).json({ message: "Login successful", user });
+      res.status(200).json({ message: "Login successful", ...user });
+
     } catch (error: unknown) {
       ErrorHandler.handleError(res, error);
     }
