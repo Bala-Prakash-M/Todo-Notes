@@ -2,6 +2,7 @@ import type { RegisterDto, LoginDto } from "./auth.dto.js";
 import { UserRepository } from "../../shared/repositories/user.repository.js";
 import { comparePasswords, hashPassword } from "../../shared/utils/password.js";
 import { JwtUtils } from "../../shared/utils/jwt.js";
+import { AppError } from "../../shared/errors/app-error.js";
 
 export class AuthService {
 
@@ -39,7 +40,7 @@ export class AuthService {
       };
 
     } catch(error: unknown) {
-      throw new Error((error as Error).message);
+      throw new AppError(400, (error as Error).message);
     }
   }
 
@@ -49,7 +50,7 @@ export class AuthService {
       const user = await this.UserRepository.findByEmail(credentials.email);
 
       if (!user) {
-        throw new Error("User not found");
+        throw new AppError(400, "User not found");
       }
 
       const passwordMatch = await comparePasswords(credentials.password, user.password);
@@ -71,7 +72,7 @@ export class AuthService {
       };
 
     } catch(error: unknown) {
-      throw new Error((error as Error).message);
+      throw new AppError(400, (error as Error).message);
     }
   }
 

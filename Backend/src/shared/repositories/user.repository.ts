@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import type { RegisterDto } from "../../modules/auth/auth.dto.js";
+import { AppError } from "../errors/app-error.js";
 
 export class UserRepository {
 
@@ -13,7 +14,7 @@ export class UserRepository {
       return user;
   
     } catch(error) {
-      throw new Error("Error finding user by email: " + error);
+      throw new AppError(400, "Error finding user by email: " + error);
     }
   }
   
@@ -29,7 +30,7 @@ export class UserRepository {
     })
     return newUser;
   } catch (error) {
-    throw new Error("Error creating user: " + error);
+    throw new AppError(400, "Error creating user: " + error);
   }
   }
 }
