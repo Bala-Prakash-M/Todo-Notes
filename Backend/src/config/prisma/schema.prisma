@@ -51,8 +51,8 @@ model Note {
   title       String
   content     String
 
-  noteBookId  String
-  noteBook    Notebook  @relation(fields: [noteBookId], references: [id], onDelete: Cascade)
+  notebookId  String
+  notebook    Notebook  @relation(fields: [notebookId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt

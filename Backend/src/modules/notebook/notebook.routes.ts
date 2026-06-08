@@ -9,8 +9,8 @@ import { NotebookRepository } from '../../shared/repositories/notebook.repositor
 const router = express.Router();
 
 const authMiddleware = new AuthMiddleware(
-    new JwtUtils()
-  );
+  new JwtUtils()
+);
 
 const notebookController = new NotebookController(
   new NotebookService(
@@ -28,7 +28,7 @@ router.get('/name/:name', notebookController.getByName);
 
 router.post('/', notebookController.create);
 
-router.put('/:id', notebookController.update);
+router.patch('/:id', notebookController.update);
 
 router.delete('/:id', notebookController.delete);
 

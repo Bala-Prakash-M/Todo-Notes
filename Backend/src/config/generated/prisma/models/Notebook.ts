@@ -237,7 +237,7 @@ export type NotebookCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNotebooksInput
-  notes?: Prisma.NoteCreateNestedManyWithoutNoteBookInput
+  notes?: Prisma.NoteCreateNestedManyWithoutNotebookInput
 }
 
 export type NotebookUncheckedCreateInput = {
@@ -246,7 +246,7 @@ export type NotebookUncheckedCreateInput = {
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutNoteBookInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutNotebookInput
 }
 
 export type NotebookUpdateInput = {
@@ -255,7 +255,7 @@ export type NotebookUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNotebooksNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutNoteBookNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutNotebookNestedInput
 }
 
 export type NotebookUncheckedUpdateInput = {
@@ -264,7 +264,7 @@ export type NotebookUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutNoteBookNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutNotebookNestedInput
 }
 
 export type NotebookCreateManyInput = {
@@ -390,7 +390,7 @@ export type NotebookCreateWithoutUserInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  notes?: Prisma.NoteCreateNestedManyWithoutNoteBookInput
+  notes?: Prisma.NoteCreateNestedManyWithoutNotebookInput
 }
 
 export type NotebookUncheckedCreateWithoutUserInput = {
@@ -398,7 +398,7 @@ export type NotebookUncheckedCreateWithoutUserInput = {
   name: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutNoteBookInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutNotebookInput
 }
 
 export type NotebookCreateOrConnectWithoutUserInput = {
@@ -498,7 +498,7 @@ export type NotebookUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  notes?: Prisma.NoteUpdateManyWithoutNoteBookNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutNotebookNestedInput
 }
 
 export type NotebookUncheckedUpdateWithoutUserInput = {
@@ -506,7 +506,7 @@ export type NotebookUncheckedUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutNoteBookNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutNotebookNestedInput
 }
 
 export type NotebookUncheckedUpdateManyWithoutUserInput = {
