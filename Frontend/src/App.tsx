@@ -1,13 +1,12 @@
-import './App.css'
-import AuthPage from './features/auth/pages/AuthPage'
+import "./App.css";
+import { AppRouter } from "./app/router/AppRouter";
 
 function App() {
-
   return (
     <>
-      <AuthPage />
+      <AppRouter />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
