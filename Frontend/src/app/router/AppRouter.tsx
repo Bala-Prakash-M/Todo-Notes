@@ -6,10 +6,11 @@ import {
 
 import AuthPage from "../../features/auth/pages/AuthPage";
 import { ProtectedRoute } from "./ProtectedRouter";
+import { LandingPage } from "../../features/Landing/pages/LandingPage";
 
-function HomePage() {
-  return <h1>Home Page</h1>;
-}
+// function HomePage() {
+//   return <h1>Home Page</h1>;
+// }
 
 function DashboardPage() {
   return <h1>Dashboard</h1>;
@@ -21,7 +22,7 @@ export function AppRouter() {
 
       <Route
         path="/"
-        element={<HomePage />}
+        element={<LandingPage />}
       />
 
       <Route
