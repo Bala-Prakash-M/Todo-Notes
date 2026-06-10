@@ -17,67 +17,103 @@ const pillarDataset: PillarData[] = [
   {
     id: "notebooks",
     num: "01",
-    label: "Structural Volume",
+    label: "Structured Space",
     title: "Notebooks.",
-    boldSnippet: "Build deep volumes.",
-    bodyText: "Long-form documentation, system architecture records, and research journals require dedicated space. This layer provides uncompromised, clean containment for thoughts that take time to mature.",
+    boldSnippet: "Build lasting collections.",
+    bodyText:
+      "Some ideas deserve more than a quick note. Keep projects, journals, research, and long-form writing together in a space that grows with them.",
     previewContent: (
       <div className="space-y-4 font-sans text-xs md:text-sm text-slate-700 animate-[fadeIn_0.5s_ease-out]">
         <div className="border-b border-slate-300/60 pb-2 flex justify-between items-baseline">
-          <span className="font-medium text-slate-900 font-serif italic text-base">// Engineering Logs Vol. IV</span>
-          <span className="text-[10px] font-mono text-slate-400">12 entries</span>
+          <span className="font-medium text-slate-900 font-serif italic text-base">
+            // Travel Plans
+          </span>
+          <span className="text-[10px] font-mono text-slate-400">
+            8 entries
+          </span>
         </div>
+
         <div className="border-b border-slate-300/60 pb-2 flex justify-between items-baseline opacity-80">
-          <span className="font-medium text-slate-900 font-serif italic text-base">// Product Interface Manifesto</span>
-          <span className="text-[10px] font-mono text-slate-400">4 entries</span>
+          <span className="font-medium text-slate-900 font-serif italic text-base">
+            // Books to Read
+          </span>
+          <span className="text-[10px] font-mono text-slate-400">
+            14 entries
+          </span>
         </div>
+
         <div className="border-b border-slate-300/60 pb-2 flex justify-between items-baseline opacity-60">
-          <span className="font-medium text-slate-900 font-serif italic text-base">// Personal Philosophy Study</span>
-          <span className="text-[10px] font-mono text-slate-400">28 entries</span>
+          <span className="font-medium text-slate-900 font-serif italic text-base">
+            // Personal Journal
+          </span>
+          <span className="text-[10px] font-mono text-slate-400">
+            22 entries
+          </span>
         </div>
       </div>
     )
   },
+
   {
     id: "thoughts",
     num: "02",
-    label: "Ephemeral Fragment",
+    label: "Passing Moments",
     title: "Thoughts.",
-    boldSnippet: "Capture the fragments.",
-    bodyText: "Raw data inputs are fleeting and completely unstructured. Catch terminal execution snippets, draft configuration strings, or conceptual paths the millisecond they cross your mind.",
+    boldSnippet: "Capture what appears.",
+    bodyText:
+      "Ideas rarely arrive on schedule. Save passing observations, questions, reminders, and moments before they quietly disappear.",
     previewContent: (
-      <div className="space-y-4 font-mono text-[11px] text-slate-600 animate-[fadeIn_0.5s_ease-out]">
+      <div className="space-y-4 font-sans text-[11px] text-slate-600 animate-[fadeIn_0.5s_ease-out]">
         <div className="bg-slate-200/50 p-3 border border-slate-300/40 relative">
-          <span className="absolute right-2 top-2 text-[9px] text-slate-400">14:02 // Today</span>
-          <p className="pr-16 leading-relaxed">The user shouldn't feel like they are opening an app; they are stepping into their own thoughts.</p>
+          <span className="absolute right-2 top-2 text-[9px] text-slate-400">
+            09:42 // Today
+          </span>
+          <p className="pr-16 leading-relaxed">
+            I should visit the sea at least once this year.
+          </p>
         </div>
+
         <div className="bg-slate-200/50 p-3 border border-slate-300/40 relative opacity-70">
-          <span className="absolute right-2 top-2 text-[9px] text-slate-400">02:14 // May 28</span>
-          <p className="pr-16 leading-relaxed">Why do old songs feel like physical places you can return to?</p>
+          <span className="absolute right-2 top-2 text-[9px] text-slate-400">
+            11:18 // Yesterday
+          </span>
+          <p className="pr-16 leading-relaxed">
+            Why do some places feel familiar even when you've never been there?
+          </p>
         </div>
       </div>
     )
   },
+
   {
     id: "tasks",
     num: "03",
-    label: "Actionable Intention",
+    label: "Small Intentions",
     title: "Tasks.",
-    boldSnippet: "Track direct intentions.",
-    bodyText: "Action layers should never be severed from the context that built them. Manage functional project milestones, checklist steps, and immediate execution on the exact same plane as your notes.",
+    boldSnippet: "Track what matters.",
+    bodyText:
+      "Some thoughts ask for action. Keep daily responsibilities, personal goals, and small promises close to the ideas that inspired them.",
     previewContent: (
       <div className="space-y-3 font-sans text-xs md:text-sm text-slate-700 animate-[fadeIn_0.5s_ease-out]">
         <div className="flex items-center gap-3">
           <span className="w-3 h-3 border border-slate-400 rounded-none shrink-0" />
-          <span className="text-slate-800 tracking-wide font-medium">Refactor active JWT localstorage state to clean memory-cookies.</span>
+          <span className="text-slate-800 tracking-wide font-medium">
+            Call the dentist.
+          </span>
         </div>
+
         <div className="flex items-center gap-3 opacity-70">
           <span className="w-3 h-3 border border-slate-400 rounded-none shrink-0" />
-          <span className="text-slate-800 tracking-wide">Optimize canvas SVG background layers to eliminate mobile latency.</span>
+          <span className="text-slate-800 tracking-wide">
+            Finish reading the last chapter.
+          </span>
         </div>
+
         <div className="flex items-center gap-3 opacity-40 line-through">
           <span className="w-3 h-3 bg-slate-500 border border-slate-500 rounded-none shrink-0" />
-          <span className="text-slate-500 tracking-wide">Establish core application routing map hierarchy inside Vite stack.</span>
+          <span className="text-slate-500 tracking-wide">
+            Buy groceries for the weekend.
+          </span>
         </div>
       </div>
     )
@@ -113,7 +149,7 @@ export const TheManifesto: React.FC = () => {
                 <button
                   key={pillar.id}
                   onClick={() => setActiveTab(pillar.id)}
-                  className="group flex items-baseline gap-6 text-left focus:outline-none py-2 transition-all duration-500"
+                  className="group flex items-baseline gap-6 text-left focus:outline-none py-2 transition-all duration-500 cursor-pointer"
                 >
                   <span className={`font-mono text-3xl md:text-5xl font-extralight transition-colors duration-700 ${isSelected ? 'text-slate-900 font-normal' : 'text-slate-400 group-hover:text-slate-600'}`}>
                     {pillar.num}

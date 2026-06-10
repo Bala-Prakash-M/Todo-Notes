@@ -3,6 +3,7 @@ import { TextureSVGContent } from "./TextureSVGContent";
 import { TheArchive } from "../TheArchive";
 import { TheManifesto } from "../TheManifesto";
 import { ControlHub } from "../../../../shared/components/ControlHub";
+import { Footer } from "../Footer";
 
 
 export const TextureSVG: React.FC = () => {
@@ -197,6 +198,7 @@ export const TextureSVG: React.FC = () => {
       `}</style>
       <TheArchive />
       <TheManifesto />
+      <Footer />
     </div>
   );
 };
