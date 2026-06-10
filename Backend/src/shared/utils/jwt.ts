@@ -17,7 +17,6 @@ if (!JWT_SECRET) {
 
 export class JwtUtils {
   generateToken = (payload: unknown): string => {
-
     const validPayload = AuthPayLoadSchema.safeParse(payload);
 
     if (!validPayload.success) {
@@ -25,13 +24,11 @@ export class JwtUtils {
     }
 
     return jwt.sign(validPayload.data, JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "7d",
     });
-
-  }
+  };
 
   verifyToken = (token: string): AuthPayload => {
-
     const decoded = jwt.verify(token, JWT_SECRET);
 
     const payload = AuthPayLoadSchema.safeParse(decoded);
@@ -41,5 +38,5 @@ export class JwtUtils {
     }
 
     return payload.data;
-  }
+  };
 }

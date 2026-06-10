@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface SearchItem {
   id: string;
@@ -15,6 +16,9 @@ const MOCK_DATA: SearchItem[] = [
 ];
 
 export const ControlHub: React.FC = () => {
+
+  const navigate = useNavigate();
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -202,6 +206,7 @@ export const ControlHub: React.FC = () => {
                   localStorage.setItem("token", "mock-auth-payload");
                   setToken("mock-auth-payload");
                   setIsMenuOpen(false);
+                  navigate("/auth");
                 }}
                 className="w-full font-mono text-[11px] tracking-[0.25em] bg-[#1e232a] text-[#f8fafc] hover:bg-[#0f172a] rounded-none py-2.5 text-center uppercase transition-all duration-300 focus:outline-none border border-transparent shadow-sm"
               >

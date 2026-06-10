@@ -16,7 +16,6 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  // Trigger gentle entry animation on mount
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -26,12 +25,10 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
     setError("");
     setIsSubmitting(true);
 
-    // Create a 2-second delay wrapper to allow the loading state to settle calmly
     const apiCall = authApi.login({ email, password });
     const delay = new Promise((resolve) => setTimeout(resolve, 2000));
 
     try {
-      // Wait for both the minimum 2 seconds and the API response
       const [response] = await Promise.all([apiCall, delay]);
       localStorage.setItem("token", response.token);
       navigate("/home");
@@ -47,42 +44,27 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#e9ecf0] px-6 select-none relative">
-      
-      {/* Background Architectural Framing Lines */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-25 overflow-hidden">
-        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <line x1="15%" y1="0" x2="15%" y2="100%" stroke="#cbd5e1" strokeWidth="0.5" strokeDasharray="1 12" />
-          <line x1="85%" y1="0" x2="85%" y2="100%" stroke="#cbd5e1" strokeWidth="0.5" strokeDasharray="1 12" />
-        </svg>
-      </div>
-
-      {/* Containing Box with Entry Animation Classes */}
-      <div 
-        className={`relative z-10 w-full max-w-sm flex flex-col gap-10 py-12 transition-all duration-1000 ease-out transform ${
+    <div className="w-full max-w-sm mx-auto px-6 select-none relative z-10">
+      {/* PURE FLOATING CONTENT: No container divs, no backgrounds, no shadows */}
+      <div
+        className={`w-full flex flex-col gap-10 transition-all duration-1000 ease-out transform ${
           isMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
-        
-        {/* Editorial Heading */}
-        <div className="flex flex-col gap-2 border-b border-slate-300/60 pb-6">
-          <span className="text-xs font-mono font-bold text-slate-500 uppercase tracking-[0.2em]">
-            The Archive
+        {/* Editorial Heading Panel */}
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] font-mono font-black text-slate-900 uppercase tracking-[0.3em]">
+            login
           </span>
-          <h2 className="text-2xl font-normal tracking-tight text-slate-900 font-serif mt-1">
-            Welcome back.
-          </h2>
         </div>
 
         <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
-          
-          {/* Vertical Form Fields Stack */}
+          {/* Frameless Input Section */}
           <div className="flex flex-col gap-6">
-            
-            {/* Email Field */}
-            <div className="flex flex-col gap-1.5 relative">
-              <label className="text-xs font-mono font-bold text-slate-600 tracking-wide lowercase">
-                email address
+            {/* Email Field Line */}
+            <div className="flex flex-col gap-1 relative border-b-2 border-slate-900 pb-1 focus-within:border-black transition-colors duration-300">
+              <label className="text-[10px] font-mono font-black text-slate-900 uppercase tracking-widest">
+                user_id // email
               </label>
               <input
                 type="email"
@@ -91,81 +73,85 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
                 placeholder="name@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full bg-transparent border-b border-slate-300 py-2 text-base font-sans font-normal text-slate-900 placeholder-slate-400/80 focus:outline-none focus:border-slate-800 transition-colors duration-300 ease-out tracking-wide"
+                className="block w-full bg-transparent text-base font-sans font-medium text-slate-950 placeholder-slate-500/70 focus:outline-none py-1 tracking-wide"
               />
             </div>
 
-            {/* Password Field */}
-            <div className="flex flex-col gap-1.5 relative">
+            {/* Password Field Line */}
+            <div className="flex flex-col gap-1 relative border-b-2 border-slate-900 pb-1 focus-within:border-black transition-colors duration-300">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-mono font-bold text-slate-600 tracking-wide lowercase">
-                  password
+                <label className="text-[10px] font-mono font-black text-slate-900 uppercase tracking-widest">
+                  passkey // security
                 </label>
-                
-                {/* Minimalist Text-Based Visibility Toggle */}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-[11px] font-mono font-bold text-slate-400 hover:text-slate-800 tracking-wider uppercase focus:outline-none transition-colors duration-200 cursor-pointer"
+                  className="text-[10px] font-mono font-black text-slate-600 hover:text-black tracking-wide uppercase focus:outline-none transition-colors duration-150 cursor-pointer"
                 >
-                  {showPassword ? "hide" : "show"}
+                  {showPassword ? "[hide]" : "[show]"}
                 </button>
               </div>
               <input
                 type={showPassword ? "text" : "password"}
                 required
                 autoComplete="current-password"
-                placeholder={showPassword ? "password123" : "••••••••"}
+                placeholder={showPassword ? "password_string" : "••••••••••••"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full bg-transparent border-b border-slate-300 py-2 text-base font-sans font-normal text-slate-900 placeholder-slate-400/80 focus:outline-none focus:border-slate-800 transition-colors duration-300 ease-out tracking-wide font-mono"
+                /* FIX: Dynamic tracking classes prevent typed characters from clipping off-screen when revealed */
+                className={`block w-full bg-transparent text-base font-mono font-bold text-slate-950 placeholder-slate-500/70 focus:outline-none py-1 ${
+                  showPassword ? "tracking-normal" : "tracking-widest"
+                }`}
               />
             </div>
           </div>
 
-          {/* Action Trigger Row */}
-          <div className="flex flex-col gap-5 pt-2">
+          {/* Action Infrastructure */}
+          <div className="flex flex-col gap-5 mt-4">
+            {/* Frameless Border Button */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-11 flex justify-center items-center px-4 text-xs font-mono font-bold tracking-widest uppercase border border-slate-800 text-slate-900 bg-slate-200/40 hover:bg-slate-900 hover:text-white transition-all duration-300 ease-out disabled:opacity-40 disabled:hover:bg-slate-200/40 disabled:hover:text-slate-900 disabled:hover:border-slate-800 cursor-pointer relative overflow-hidden"
+              className="h-12 w-full flex justify-center items-center px-8 text-xs font-mono font-black tracking-widest uppercase rounded-full border border-slate-900/20 text-slate-950 bg-slate-900/5 backdrop-blur-[2px] hover:bg-gradient-to-r hover:from-slate-900 hover:to-slate-800 hover:text-white hover:border-transparent hover:shadow-[0_4px_20px_rgba(15,23,42,0.15)] transition-all duration-500 ease-out disabled:opacity-40 cursor-pointer"
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-3">
-                  {/* Custom CSS Monochromatic Loading Pulse Indicator */}
                   <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-800 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-900"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
                   </span>
-                  <span className="animate-pulse tracking-[0.25em] lowercase font-normal text-slate-700">verifying connection...</span>
+                  <span className="tracking-[0.15em] font-bold lowercase">
+                    initializing vault...
+                  </span>
                 </div>
               ) : (
-                "Sign In"
+                "Initaialize workspace"
               )}
             </button>
 
-            {/* Quiet Error Treatment Footnote */}
-            {error && (
-              <p className="text-xs font-mono font-medium text-rose-950 tracking-wide border-l-2 border-rose-800 pl-3 py-0.5 mt-1">
-                ! {error.toLowerCase()}
-              </p>
-            )}
-          </div>
-
-          {/* Alternative Switch Navigation */}
-          <div className="text-center pt-2">
-            <p className="text-xs font-mono text-slate-500 tracking-normal">
-              First time here?{" "}
+            {/* Clean Vertical Switch Text */}
+            <div className="text-center pt-1">
               <button
                 type="button"
                 onClick={onSwitchToRegister}
-                className="text-slate-800 hover:text-slate-950 font-bold underline underline-offset-4 decoration-slate-300 hover:decoration-slate-900 transition-colors duration-200 focus:outline-none ml-1 group relative py-0.5 cursor-pointer"
+                className="text-xs font-mono text-slate-800 hover:text-black focus:outline-none cursor-pointer group relative py-0.5"
               >
-                Create Credentials.
+                New here?{" "}
+                <span className="underline underline-offset-4 font-black">
+                  Create Credentials
+                </span>
               </button>
-            </p>
-          </div>
+            </div>
 
+            {/* Error messaging footprint row */}
+            {error && (
+              <div className="flex items-start gap-2 border-l-2 border-rose-700 pl-3 py-0.5 mt-1 transition-all duration-300">
+                <p className="text-sm font-mono font-bold text-rose-950 tracking-wide leading-relaxed lowercase">
+                  fault: {error.toLowerCase()}
+                </p>
+              </div>
+            )}
+          </div>
         </form>
       </div>
     </div>
