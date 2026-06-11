@@ -151,8 +151,8 @@ export const ControlHub: React.FC = () => {
 
               <nav className="group/nav flex flex-col space-y-3 pt-1">
                 {[
-                  { label: "Notebooks", href: "#notebooks" },
-                  { label: "Todos", href: "#todos" },
+                  { label: "Notebooks", href: "notebooks" },
+                  { label: "Todos", href: "tasks" },
                   { label: "About Space", href: "#about" },
                 ].map((route) => (
                   <a

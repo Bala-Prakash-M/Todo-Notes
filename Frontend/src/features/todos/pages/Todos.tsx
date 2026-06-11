@@ -1,104 +1,83 @@
-import React, { useState } from "react";
-
-// Types for structural safety
-interface TaskItem {
-  id: string;
-  title: string;
-  timeStart: string;
-  timeEnd: string;
-  category: "Backend" | "Design" | "Personal" | "Learning";
-  colorClass: string;
-  bgClass: string;
-}
-
-interface SidebarTask {
-  title: string;
-  date: string;
-  colorClass: string;
-}
+import React, { useState, useEffect } from "react";
+import { ArchitecturalTexture } from "../components/Texture";
+import { useTodos } from "../hooks/handle.todos.hook";
 
 export const TasksPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"timeline" | "list">("timeline");
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // State to manage our out-of-the-box minimal pop-up
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [taskContent, setTaskContent] = useState("");
 
-  // Mock static layout vectors matching the referenced interface state
-  const dailyTasks: TaskItem[] = [
-    {
-      id: "1",
-      title: "Backend Authentication API",
-      timeStart: "08:00",
-      timeEnd: "10:00",
-      category: "Backend",
-      colorClass: "bg-indigo-600",
-      bgClass: "bg-[#edf0f7]/60 border-[#dbe1ee]",
-    },
-    {
-      id: "2",
-      title: "Design Login Experience",
-      timeStart: "10:30",
-      timeEnd: "12:00",
-      category: "Design",
-      colorClass: "bg-amber-600",
-      bgClass: "bg-[#f9f6f0]/60 border-[#f1e9da]",
-    },
-    {
-      id: "3",
-      title: "DSA Practice",
-      timeStart: "14:00",
-      timeEnd: "15:30",
-      category: "Personal",
-      colorClass: "bg-emerald-600",
-      bgClass: "bg-[#edf7f4]/60 border-[#daede7]",
-    },
-    {
-      id: "4",
-      title: "Read about Docker Networking",
-      timeStart: "16:00",
-      timeEnd: "17:30",
-      category: "Learning",
-      colorClass: "bg-purple-600",
-      bgClass: "bg-[#f5edf7]/60 border-[#ebd9f1]",
-    },
-  ];
+  const { 
+    todos, 
+    handleToggleComplete, 
+    handleDeleteTask, 
+    formatDetailedTimestamp, 
+    formatted, 
+    setCurrentTime, 
+    loading,
+    mutating,
+    handleCreateTodo 
+  } = useTodos();  
 
-  const upcomingTasks: SidebarTask[] = [
-    { title: "Learn Redis Basics", date: "Tomorrow", colorClass: "bg-amber-500" },
-    { title: "Build Study Companion", date: "Feb 12", colorClass: "bg-amber-500" },
-    { title: "Cloud Deployment", date: "Feb 15", colorClass: "bg-indigo-400" },
-  ];
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-  const somedayTasks = [
-    { title: "AI Integration Ideas", colorClass: "bg-indigo-400" },
-    { title: "Write Technical Blog", colorClass: "bg-indigo-400" },
-    { title: "Build Mobile App", colorClass: "bg-indigo-400" },
-    { title: "Learn System Design", colorClass: "bg-indigo-400" },
-  ];
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [setCurrentTime]);
+
+  // Handler for creating a task and closing the pop-up safely
+  const onConfirmCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!taskContent.trim()) return;
+
+      handleCreateTodo(taskContent);
+    // Reset state parameters
+    setTaskContent("");
+    setIsPopupOpen(false);
+  };
+
+  const renderColoredTime = () => {
+    if (!formatted) return "System Offline";
+    const splitIndex = formatted.indexOf("//");
+    if (splitIndex === -1) return formatted;
+
+    const prefix = formatted.substring(0, splitIndex + 2);
+    const timeString = formatted.substring(splitIndex + 2);
+
+    return (
+      <>
+        <span className="text-slate-400">{prefix}</span>
+        <span className="text-indigo-600 font-bold tracking-widest pl-1">{timeString}</span>
+      </>
+    );
+  };
 
   return (
-    <div className="min-h-screen w-full bg-[#f0f2f6] text-slate-900 font-sans antialiased flex relative overflow-x-hidden select-none">
+    <div className="h-screen w-full bg-[#f0f2f6] text-slate-900 font-sans antialiased flex flex-col md:flex-row relative overflow-hidden select-none">
       
-      {/* 1. ARCHITECTURAL BACKGROUND LINES (Replicated from the image) */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-40">
-        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <path d="M-100,100 Q 400,200 600,600 T 1600,900" fill="none" stroke="#ffffff" strokeWidth="2" />
-          <path d="M-50,300 Q 500,100 900,500 T 1800,400" fill="none" stroke="#ffffff" strokeWidth="1.5" />
-        </svg>
-      </div>
+      <ArchitecturalTexture />
 
-      {/* 2. SYSTEM SIDEBAR NAVIGATION PANEL */}
-      <aside className="w-20 border-r border-slate-300/60 bg-transparent flex flex-col items-center justify-between py-6 z-10">
-        <div className="flex flex-col items-center gap-10 w-full">
-          {/* Brand Mark Accent */}
-          <div className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-950 text-white font-serif text-lg">
+      {/* FIXED SYSTEM NAVIGATION (Desktop Sidebar / Mobile Floating Dock) */}
+      <aside className="fixed bottom-6 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-0 md:bottom-0 md:relative w-[90%] max-w-sm md:w-20 h-16 md:h-full border border-slate-300/80 md:border-t-0 md:border-b-0 md:border-r bg-white/60 md:bg-transparent backdrop-blur-md md:backdrop-blur-0 rounded-full md:rounded-none px-6 md:px-0 py-0 md:py-6 flex flex-row md:flex-col items-center justify-between z-40 shrink-0 shadow-[0_8px_32px_rgba(15,23,42,0.08)] md:shadow-none transition-all duration-500">
+        <div className="flex flex-row md:flex-col items-center justify-between md:justify-start w-full md:w-auto gap-0 md:gap-10 flex-1 md:flex-initial">
+          <div className="h-9 w-9 items-center justify-center rounded-full bg-slate-950 text-white font-serif text-base cursor-pointer transform hover:rotate-180 transition-transform duration-500 hidden md:flex">
             ◐
           </div>
-          {/* Functional Navigation Blocks Stack */}
-          <nav className="flex flex-col gap-6 w-full items-center">
-            {["⌂", "▤", "✓", "☊", "📁"].map((icon, idx) => (
+          <nav className="flex flex-row md:flex-col gap-1 sm:gap-2 md:gap-4 items-center justify-around md:justify-center w-full">
+            {["⌂", "▤", "✓", "☊"].map((icon, idx) => (
               <button
                 key={idx}
-                className={`h-11 w-11 flex items-center justify-center rounded-xl text-lg transition-all duration-300 cursor-pointer ${
-                  idx === 2 
-                    ? "bg-[#e5e9ee] border border-slate-400/40 text-slate-950 shadow-sm" 
+                className={`h-10 w-10 md:h-11 md:w-11 flex items-center justify-center rounded-full md:rounded-xl text-base md:text-lg transition-all duration-300 cursor-pointer ${
+                  idx === 2
+                    ? "bg-slate-950 text-white md:bg-slate-900/10 md:text-slate-950 shadow-sm font-bold"
                     : "text-slate-500 hover:text-slate-950 hover:bg-slate-200/50"
                 }`}
               >
@@ -107,220 +86,238 @@ export const TasksPage: React.FC = () => {
             ))}
           </nav>
         </div>
-        
-        {/* User Identity Footer Slot */}
-        <div className="h-10 w-10 rounded-full overflow-hidden border border-slate-400/60 cursor-pointer">
-          <img 
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" 
-            alt="Profile Avatar" 
+
+        <div className="h-8 w-8 md:h-10 md:w-10 rounded-full overflow-hidden border border-slate-400/60 cursor-pointer shrink-0 ml-2 md:ml-0">
+          <img
+            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
+            alt="Avatar"
             className="w-full h-full object-cover"
           />
         </div>
       </aside>
 
-      {/* MAIN SCREEN CONSOLE CORE */}
-      <main className="flex-1 grid grid-cols-1 xl:grid-cols-12 gap-8 p-8 sm:p-10 z-10 max-w-[1600px] mx-auto w-full">
-        
-        {/* 3. CENTER COLUMN CONTENT WINDOW (Spans 8 Columns) */}
-        <section className="xl:col-span-8 flex flex-col gap-8">
-          
-          {/* Dynamic Top Workspace Header Row */}
-          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 w-full pb-4">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-xs font-mono font-bold text-slate-500 uppercase tracking-widest">
-                The Archive
+      {/* MAIN APP DISPLAY CORE */}
+      <main
+        className={`flex-1 flex flex-col h-full z-10 max-w-4xl mx-auto w-full px-5 sm:px-10 md:px-12 pt-6 sm:pt-10 md:pt-12 pb-24 md:pb-6 transition-all duration-700 ease-out transform ${
+          isMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+        }`}
+      >
+        {/* Fixed Header Layer */}
+        <div className="shrink-0 flex flex-col gap-4 sm:gap-5">
+          <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full border-b-2 border-slate-900 pb-4 sm:pb-5">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[9px] sm:text-[10px] font-mono font-black text-slate-400 uppercase tracking-[0.25em]">
+                workspace_directory
               </span>
-              <h1 className="text-4xl font-normal font-serif text-slate-950 tracking-tight">
+              <h1 className="text-3xl sm:text-5xl font-serif italic font-light text-slate-950 tracking-wide">
                 Tasks
               </h1>
-              <p className="text-sm font-mono text-slate-500 font-medium">
-                Capture thoughts. Organize. Act.
-              </p>
             </div>
 
-            {/* Top Bar Actions Cluster */}
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <input 
-                  type="text" 
-                  placeholder="Search tasks..." 
-                  className="bg-transparent border border-slate-300/80 rounded-lg px-4 py-2 pl-4 pr-10 text-sm font-sans focus:outline-none focus:border-slate-900 w-52 placeholder-slate-400 transition-colors"
+            {/* Actions Stack Control Elements */}
+            <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+              <div className="relative border-b border-slate-400 focus-within:border-slate-950 transition-colors duration-300 flex-1 sm:flex-initial">
+                <input
+                  type="text"
+                  placeholder="search tasks..."
+                  className="bg-transparent px-1 py-1 text-sm font-sans focus:outline-none w-full sm:w-44 placeholder-slate-400 font-medium"
                 />
-                <span className="absolute right-3 top-2.5 text-slate-400 text-xs">⚲</span>
               </div>
-              <button className="p-2 border border-slate-300/80 rounded-lg text-slate-600 hover:text-slate-950 hover:bg-slate-200/50 cursor-pointer text-sm">🎛</button>
-              <button className="p-2 border border-slate-300/80 rounded-lg text-slate-600 hover:text-slate-950 hover:bg-slate-200/50 cursor-pointer text-sm">⚙</button>
-              <button className="bg-slate-950 text-white rounded-lg px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider hover:bg-slate-800 transition-colors cursor-pointer shadow-sm">
-                + New Task
+              
+              {/* Clicking this safely triggers our customized pop-up view state */}
+              <button 
+                onClick={() => setIsPopupOpen(true)}
+                className="bg-slate-950 text-white rounded-full px-4 sm:px-5 h-9 sm:h-10 text-xs font-mono font-black uppercase tracking-widest hover:bg-black transition-colors duration-300 cursor-pointer shadow-sm shrink-0"
+              >
+                + new_task
               </button>
             </div>
           </header>
 
-          {/* Interactive Mode Filter Segment Tab Bar */}
-          <div className="flex items-center justify-between border-b border-slate-300/40 pb-2 mt-2">
-            <button className="flex items-center gap-1.5 text-sm font-bold text-slate-800 font-sans cursor-pointer group">
-              Today, 9 February <span className="text-xs text-slate-400 group-hover:text-slate-950">▼</span>
-            </button>
-            <div className="flex items-center gap-4 text-xs font-mono font-bold tracking-wider uppercase">
-              <button 
-                onClick={() => setActiveTab("timeline")}
-                className={`pb-2 relative cursor-pointer ${activeTab === "timeline" ? "text-slate-950 font-black" : "text-slate-400 hover:text-slate-700"}`}
-              >
-                Timeline
-                {activeTab === "timeline" && <span className="absolute bottom-[-9px] left-0 right-0 h-[2px] bg-slate-950" />}
-              </button>
-              <button 
-                onClick={() => setActiveTab("list")}
-                className={`pb-2 relative cursor-pointer ${activeTab === "list" ? "text-slate-950 font-black" : "text-slate-400 hover:text-slate-700"}`}
-              >
-                List
-                {activeTab === "list" && <span className="absolute bottom-[-9px] left-0 right-0 h-[2px] bg-slate-950" />}
-              </button>
+          {/* Time Matrix Sub-Header Bar */}
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="text-[11px] sm:text-sm font-mono font-black text-slate-950 uppercase tracking-wider cursor-pointer flex items-center">
+              {renderColoredTime()}
             </div>
           </div>
+        </div>
 
-          {/* Core Daily Schedule Grid Timeline Map Layer */}
-          <div className="flex flex-col relative pl-16 py-4 min-h-[500px]">
-            {/* The Left Linear Architectural Time Axis Anchor Line */}
-            <div className="absolute left-[3.5rem] top-0 bottom-0 w-[1px] bg-slate-300/80" />
-
-            {/* Time Track Matrix Increment Markers */}
-            {["08:00", "10:00", "12:00", "14:00", "16:00", "18:00"].map((time, idx) => (
-              <div key={idx} className="absolute left-0 text-[11px] font-mono font-bold text-slate-400" style={{ top: `${idx * 100 + 24}px` }}>
-                {time}
-                {/* Horizontal Tick Dot Overlay indicator */}
-                <span className="absolute right-[-14px] top-[4px] h-1.5 w-1.5 rounded-full bg-slate-300 border border-slate-400/40" />
+        {/* SCROLLABLE TASK WORKSPACE LIST */}
+        <div
+          className="flex-1 overflow-y-auto mt-4 sm:mt-6 pr-1 w-full [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
+          <div className="flex flex-col gap-1 min-h-full pb-8 relative">
+            
+            {loading ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center py-20 gap-3 transition-opacity duration-300">
+                <div className="relative w-6 h-6">
+                  <div className="absolute inset-0 rounded-full border-2 border-slate-300 animate-pulse" />
+                  <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-slate-950 animate-spin" />
+                </div>
+                <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest animate-pulse">
+                  syncing ledger_nodes...
+                </span>
               </div>
-            ))}
-
-            {/* Active Display Panel Content Trays */}
-            <div className="flex flex-col gap-12 pt-6 pl-6 z-10 w-full max-w-2xl">
-              {dailyTasks.map((task) => (
-                <div 
-                  key={task.id}
-                  className={`w-full p-5 rounded-2xl border flex items-center justify-between shadow-[0_4px_12px_rgba(15,23,42,0.01)] transition-all hover:scale-[1.01] ${task.bgClass}`}
+            ) : todos.length === 0 ? (
+              <p className="text-xs font-mono font-bold text-slate-400 py-6">
+                no tasks initialized inside this ledger index.
+              </p>
+            ) : (
+              todos.map((task, idx) => (
+                <div
+                  key={task.id + task.title}
+                  style={{ animationDelay: `${idx * 30}ms` }}
+                  className="w-full border-b border-slate-300/60 py-4 flex items-start justify-between group px-1 gap-3 transition-all duration-300 hover:bg-slate-950/[0.01] animate-[fadeInUp_0.4s_ease-out_both]"
                 >
-                  <div className="flex items-start gap-4">
-                    <span className={`h-2 w-2 rounded-full mt-2 shrink-0 ${task.colorClass}`} />
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-base font-medium font-sans text-slate-950 tracking-tight leading-none">
+                  <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleComplete(task)}
+                      disabled={mutating}
+                      className={`h-5 w-5 rounded-full border flex items-center justify-center transition-all duration-300 shrink-0 mt-0.5 ${
+                        mutating ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+                      } ${
+                        task.completed
+                          ? "bg-slate-950 border-slate-950 text-white scale-100"
+                          : "border-slate-400 hover:border-slate-950 bg-transparent text-transparent hover:scale-105"
+                      }`}
+                    >
+                      <span className="text-[10px] font-bold leading-none select-none">✓</span>
+                    </button>
+
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <h3
+                        className={`text-sm sm:text-base font-sans font-medium transition-all duration-300 tracking-tight leading-snug break-words ${
+                          task.completed
+                            ? "text-slate-400 line-through decoration-slate-400/50 font-normal opacity-60"
+                            : "text-slate-950"
+                        }`}
+                      >
                         {task.title}
                       </h3>
-                      <span className="text-xs font-mono text-slate-400 font-bold">
-                        {task.timeStart} – {task.timeEnd}
-                      </span>
+                      <div className="flex flex-col gap-0.5 text-[9px] sm:text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider leading-none">
+                        <span>
+                          created //{" "}
+                          <span className="text-slate-500 font-semibold">
+                            {formatDetailedTimestamp(task.createdAt)}
+                          </span>
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">{task.category}</span>
-                    <button className="text-slate-400 hover:text-slate-900 focus:outline-none cursor-pointer">⋮</button>
+
+                  <div className="flex items-center shrink-0 pt-0.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200">
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteTask(task.id)}
+                      disabled={mutating}
+                      className={`text-[10px] font-mono font-black tracking-wide transition-colors uppercase px-1 py-0.5 ${
+                        mutating
+                          ? "cursor-not-allowed text-slate-300"
+                          : "cursor-pointer text-slate-400 hover:text-rose-700 active:scale-95"
+                      }`}
+                    >
+                      [delete]
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            )}
 
-            {/* End of Day Clean Architectural Footer Break */}
-            <div className="w-full max-w-2xl text-center flex flex-col gap-2 pt-16 pl-6 mt-auto">
-              <div className="flex items-center justify-center gap-4 w-full">
-                <span className="h-[1px] flex-1 bg-slate-300/40" />
-                <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest">End of day</span>
-                <span className="h-[1px] flex-1 bg-slate-300/40" />
-              </div>
-              <p className="text-xs font-mono text-slate-400 mt-2 italic leading-relaxed">
-                You've planned your day well.<br />Take a break. Your future self will thank you.
-              </p>
-            </div>
-
-          </div>
-        </section>
-
-        {/* 4. RIGHT COLUMN FLOATING DATA INSIGHT PANEL (Spans 4 Columns) */}
-        <section className="xl:col-span-4 border border-slate-300/50 bg-[#edf0f5]/50 backdrop-blur-[4px] rounded-3xl p-6 flex flex-col gap-8 h-fit shadow-[0_12px_40px_rgba(15,23,42,0.02)]">
-          
-          {/* Minimal Dynamic Calendar Workspace Container */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between text-sm font-bold text-slate-900 font-serif">
-              <h3>February 2021</h3>
-              <div className="flex items-center gap-3 text-xs font-mono">
-                <button className="text-slate-400 hover:text-slate-900 cursor-pointer">◀</button>
-                <button className="text-slate-400 hover:text-slate-900 cursor-pointer">▶</button>
-              </div>
-            </div>
-            {/* The Calendar Matrix Placeholder */}
-            <div className="grid grid-cols-7 text-center gap-y-3 gap-x-1 text-xs font-mono pt-2">
-              {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day, dIdx) => (
-                <span key={dIdx} className="font-black text-slate-400 uppercase tracking-wider mb-1">{day}</span>
-              ))}
-              {Array.from({ length: 28 }, (_, i) => i + 1).map((date) => (
-                <div key={date} className="w-full flex justify-center items-center py-1">
-                  <span className={`h-7 w-7 flex items-center justify-center rounded-full text-xs font-bold transition-all cursor-pointer ${
-                    date === 9 
-                      ? "bg-slate-950 text-white shadow-sm font-black" 
-                      : "text-slate-700 hover:bg-slate-200/80"
-                  }`}>
-                    {date}
+            {/* FOOTER ACCENT LAYER */}
+            {!loading && (
+              <footer className="w-full text-center flex flex-col gap-2.5 pt-16 mt-auto">
+                <div className="flex items-center justify-center gap-3 w-full">
+                  <span className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-slate-400/40" />
+                  <div className="h-1.5 w-1.5 rounded-full border border-slate-400/60 flex items-center justify-center bg-[#f0f2f6]">
+                    <span className="h-0.5 w-0.5 rounded-full bg-slate-950 animate-pulse" />
+                  </div>
+                  <span className="text-[9px] font-mono font-black text-slate-950 uppercase tracking-[0.3em] pl-0.5">
+                    the_archive
                   </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Upcoming Section Trace Wrapper */}
-          <div className="flex flex-col gap-3.5 pt-4 border-t border-slate-300/40">
-            <div className="flex items-center justify-between text-xs font-mono font-black text-slate-400 uppercase tracking-widest">
-              <span>Upcoming</span>
-              <span className="bg-slate-300/50 text-slate-700 px-1.5 py-0.5 rounded-full text-[10px]">3</span>
-            </div>
-            <ul className="flex flex-col gap-3">
-              {upcomingTasks.map((uTask, uIdx) => (
-                <li key={uIdx} className="flex items-center justify-between text-xs font-medium">
-                  <div className="flex items-center gap-2.5">
-                    <span className={`h-1.5 w-1.5 rounded-full ${uTask.colorClass}`} />
-                    <span className="text-slate-900 tracking-tight">{uTask.title}</span>
+                  <div className="h-1.5 w-1.5 rounded-full border border-slate-400/60 flex items-center justify-center bg-[#f0f2f6]">
+                    <span className="h-0.5 w-0.5 rounded-full bg-slate-950 animate-pulse" />
                   </div>
-                  <span className="font-mono text-slate-400 font-bold">{uTask.date}</span>
-                </li>
-              ))}
-            </ul>
+                  <span className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-slate-400/40" />
+                </div>
+                <p className="text-[10px] sm:text-xs font-mono text-slate-400 uppercase tracking-widest">
+                  Your thoughts are preserved. Clear mind, smooth motion.
+                </p>
+              </footer>
+            )}
           </div>
-
-          {/* Someday Intentional Items Column Array */}
-          <div className="flex flex-col gap-3.5 pt-4 border-t border-slate-300/40">
-            <div className="flex items-center justify-between text-xs font-mono font-black text-slate-400 uppercase tracking-widest">
-              <span>Someday</span>
-              <span className="bg-slate-300/50 text-slate-700 px-1.5 py-0.5 rounded-full text-[10px]">4</span>
-            </div>
-            <ul className="flex flex-col gap-3">
-              {somedayTasks.map((sTask, sIdx) => (
-                <li key={sIdx} className="flex items-center gap-2.5 text-xs font-medium text-slate-900">
-                  <span className={`h-1.5 w-1.5 rounded-full ${sTask.colorClass}`} />
-                  <span className="tracking-tight">{sTask.title}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Focus Performance Metric Sparkline Accent */}
-          <div className="flex flex-col gap-3 pt-4 border-t border-slate-300/40 mt-auto">
-            <div className="flex items-center justify-between text-xs font-mono font-black text-slate-400 uppercase tracking-widest">
-              <span>Focus</span>
-              <span className="text-slate-950 font-black normal-case">4h 30m</span>
-            </div>
-            {/* Minimal Vector Sparkline Trace Drawing Container */}
-            <div className="w-full h-10 relative pt-2">
-              <svg className="w-full h-full overflow-visible" viewBox="0 0 100 20" preserveAspectRatio="none">
-                <path d="M0,15 Q25,2 50,14 T100,10" fill="none" stroke="#475569" strokeWidth="1.5" />
-                <circle cx="25" cy="8" r="2" fill="#475569" />
-                <circle cx="98" cy="10" r="2" fill="#475569" />
-              </svg>
-            </div>
-            <p className="text-[11px] font-mono text-slate-400 font-bold leading-normal mt-1">
-              Consistency over intensity.<br />Keep going.
-            </p>
-          </div>
-
-        </section>
+        </div>
       </main>
+
+      {/* ====================================================================
+          OUT-OF-THE-BOX MINIMAL POP-UP OVERLAY (The Content Creator)
+          ==================================================================== */}
+      {isPopupOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-[fadeIn_0.2s_ease-out_both]">
+          
+          {/* Backdrop blur layer that mimics a lens shifting focus */}
+          <div 
+            onClick={() => setIsPopupOpen(false)}
+            className="absolute inset-0 bg-slate-900/10 backdrop-blur-md cursor-pointer"
+          />
+
+          {/* Minimal Floating Drawer Card */}
+          <div className="relative w-full max-w-md bg-[#f0f2f6]/95 border-2 border-slate-900 rounded-3xl p-6 sm:p-8 shadow-[0_20px_50px_rgba(15,23,42,0.15)] flex flex-col gap-6 animate-[fadeInUp_0.4s_ease-out_both]">
+            
+            {/* Pop-up Identity Tags */}
+            <div className="flex items-center justify-between border-b border-slate-300/60 pb-3">
+              <span className="text-[10px] font-mono font-black text-slate-900 uppercase tracking-[0.2em]">
+                node_initialization
+              </span>
+              <button 
+                onClick={() => setIsPopupOpen(false)}
+                className="text-[10px] font-mono font-black text-slate-400 hover:text-slate-950 uppercase transition-colors focus:outline-none cursor-pointer"
+              >
+                [esc]
+              </button>
+            </div>
+
+            {/* Input Submission Framework Container */}
+            <form onSubmit={onConfirmCreate} className="flex flex-col gap-6">
+              <div className="flex flex-col gap-2 border-b-2 border-slate-900 pb-2 focus-within:border-indigo-600 transition-colors duration-300">
+                <label className="text-[10px] font-mono font-black text-slate-900 uppercase tracking-widest">
+                  content // description
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  name="content"
+                  placeholder="enter task descriptor statement string..."
+                  value={taskContent}
+                  onChange={(e) => setTaskContent(e.target.value)}
+                  className="block w-full bg-transparent text-base font-sans font-medium text-slate-950 placeholder-slate-400/60 focus:outline-none py-1 tracking-wide"
+                />
+              </div>
+
+              {/* Minimal Capsule Confirm Button */}
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPopupOpen(false)}
+                  className="px-4 py-2 rounded-full text-xs font-mono font-black text-slate-500 hover:text-slate-950 uppercase transition-colors cursor-pointer"
+                >
+                  cancel
+                </button>
+                <button
+                  type="submit"
+                  className="h-10 px-6 rounded-full text-xs font-mono font-black tracking-widest uppercase bg-slate-950 text-white hover:bg-black transition-all duration-300 cursor-pointer shadow-md"
+                >
+                  confirm_entry
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
