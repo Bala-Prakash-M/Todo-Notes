@@ -1,6 +1,4 @@
-import {
-  Navigate,
-} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,10 +7,9 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({
   children,
 }: ProtectedRouteProps) {
-
   const token =
     localStorage.getItem(
-      "accessToken"
+      "token"
     );
 
   if (!token) {
