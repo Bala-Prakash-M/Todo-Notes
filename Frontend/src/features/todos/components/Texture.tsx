@@ -4,18 +4,25 @@ export const ArchitecturalTexture: React.FC = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    // Subtle delay execution pass to guarantee the layout calculates smoothly
+    const timeout = setTimeout(() => setIsMounted(true), 150);
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
-    <div className="fixed inset-0 w-full h-full z-0 pointer-events-none select-none overflow-hidden bg-[#f0f2f6]">
+    /* CHANGED: Swapped 'fixed inset-0' for 'absolute inset-0' 
+      This anchors it perfectly inside the scrollable center workspace panel only.
+    */
+    <div className="absolute inset-0 w-full h-full z-0 pointer-events-none select-none overflow-hidden bg-[#f0f2f6]">
       {/* FLUID TOPOGRAPHIC TEXTURE CANVAS
-        Matches the dashboard base tone (#f0f2f6). 
-        Uses crisp light-to-dark stacked layers with dual offset drop-shadow filters.
+        OPTIMIZED: Added a long transition duration (3000ms) with a cubic-bezier path 
+        and an organic transform scale so it feels like it grows into place.
       */}
       <svg
-        className={`w-full h-full transition-opacity duration-1000 ease-in-out ${
-          isMounted ? "opacity-90" : "opacity-0"
+        className={`w-full h-full transform transition-all duration-[3000ms] cubic-bezier(0.16, 1, 0.3, 1) ${
+          isMounted 
+            ? "opacity-90 scale-100 rotate-0" 
+            : "opacity-0 scale-[0.96] -rotate-1"
         }`}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 1440 900"
@@ -67,6 +74,7 @@ export const ArchitecturalTexture: React.FC = () => {
           fill="#f0f2f6"
           filter="url(#topo-bevel-shadow)"
         />
+        
         {/* Layer 6: Lower left balancing sweep section */}
         <path
           d="M 0,720 C 160,680 260,800 480,740 C 700,680 800,850 980,850 L 0,900 Z"

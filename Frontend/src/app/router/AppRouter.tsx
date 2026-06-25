@@ -8,14 +8,7 @@ import AuthPage from "../../features/auth/pages/AuthPage";
 import { ProtectedRoute } from "./ProtectedRouter";
 import { LandingPage } from "../../features/Landing/pages/LandingPage";
 import { TasksPage } from "../../features/todos/pages/Todos";
-
-// function HomePage() {
-//   return <h1>Home Page</h1>;
-// }
-
-// function DashboardPage() {
-//   return <h1>Dashboard</h1>;
-// }
+import { NotebookDashboard } from "../../features/notebooks/pages/NotebookGrid";
 
 export function AppRouter() {
   return (
@@ -36,6 +29,15 @@ export function AppRouter() {
         element={
           <ProtectedRoute>
             <TasksPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route 
+        path="/notebooks"
+        element={
+          <ProtectedRoute>
+            <NotebookDashboard />
           </ProtectedRoute>
         }
       />

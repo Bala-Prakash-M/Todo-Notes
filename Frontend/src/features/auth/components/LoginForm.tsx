@@ -1,47 +1,22 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { authApi } from "../api/auth.api";
+import { useAuth } from '../hooks/auth.hook'
 
 interface LoginFormProps {
   onSwitchToRegister: () => void;
 }
 
 export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
-  const navigate = useNavigate();
+
+  const { loginError, loginIsSubmitting, handleLoginSubmit } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setIsSubmitting(true);
-
-    const apiCall = authApi.login({ email, password });
-    const delay = new Promise((resolve) => setTimeout(resolve, 2000));
-
-    try {
-      const [response] = await Promise.all([apiCall, delay]);
-      localStorage.setItem("token", response.token);
-      navigate("/home");
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("Invalid email or password combination.");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="w-full max-w-sm mx-auto px-6 select-none relative z-10">
@@ -58,7 +33,7 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           </span>
         </div>
 
-        <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-8" onSubmit={(e) => handleLoginSubmit(e, email, password)}>
           {/* Frameless Input Section */}
           <div className="flex flex-col gap-6">
             {/* Email Field Line */}
@@ -111,10 +86,10 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
             {/* Frameless Border Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={loginIsSubmitting}
               className="h-12 w-full flex justify-center items-center px-8 text-xs font-mono font-black tracking-widest uppercase rounded-full border border-slate-900/20 text-slate-950 bg-slate-900/5 backdrop-blur-[2px] hover:bg-gradient-to-r hover:from-slate-900 hover:to-slate-800 hover:text-white hover:border-transparent hover:shadow-[0_4px_20px_rgba(15,23,42,0.15)] transition-all duration-500 ease-out disabled:opacity-40 cursor-pointer"
             >
-              {isSubmitting ? (
+              {loginIsSubmitting ? (
                 <div className="flex items-center gap-3">
                   <span className="flex h-2 w-2 relative">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
@@ -144,10 +119,10 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
             </div>
 
             {/* Error messaging footprint row */}
-            {error && (
+            {loginError && (
               <div className="flex items-start gap-2 border-l-2 border-rose-700 pl-3 py-0.5 mt-1 transition-all duration-300">
                 <p className="text-sm font-mono font-bold text-rose-950 tracking-wide leading-relaxed lowercase">
-                  fault: {error.toLowerCase()}
+                  fault: {loginError.toLowerCase()}
                 </p>
               </div>
             )}
