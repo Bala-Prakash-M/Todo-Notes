@@ -9,6 +9,7 @@ import { ProtectedRoute } from "./ProtectedRouter";
 import { LandingPage } from "../../features/Landing/pages/LandingPage";
 import { TasksPage } from "../../features/todos/pages/Todos";
 import { NotebookDashboard } from "../../features/notebooks/pages/NotebookGrid";
+import { EditorPage } from "../../features/notes/pages/EditorPage";
 
 export function AppRouter() {
   return (
@@ -38,6 +39,15 @@ export function AppRouter() {
         element={
           <ProtectedRoute>
             <NotebookDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route 
+        path="/edit"
+        element={
+          <ProtectedRoute>
+            <EditorPage />
           </ProtectedRoute>
         }
       />
