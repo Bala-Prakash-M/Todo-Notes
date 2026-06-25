@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { authApi } from "../api/auth.api";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
@@ -29,11 +30,11 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
     try {
       const [response] = await Promise.all([apiCall, delay]);
       console.log(response);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
       } else {
-        setError("Account initialization failed. Check connection parameter.");
+        setError("Account registration failed. Please check your connection.");
       }
     } finally {
       setIsSubmitting(false);
@@ -41,134 +42,169 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
   };
 
   return (
-    <div className="w-full max-w-sm mx-auto px-6 select-none relative z-10">
-      {/* PURE FLOATING CONTENT */}
-      <div
-        className={`w-full flex flex-col gap-10 transition-all duration-1000 ease-out transform ${
-          isMounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-        }`}
+  <div className="min-h-screen w-full flex items-center justify-center bg-transparent px-4 select-none antialiased relative z-10">
+    
+    {/* Clean, static backdrop card — zero translational motion here prevents structural stockiness */}
+    <div className="w-full max-w-[420px] bg-white/60 backdrop-blur-md border border-neutral-200/50 rounded-2xl p-8 sm:p-10 shadow-[0_8px_32px_rgba(27,27,27,0.02)]">
+      
+      {/* 
+        LAYER 1: Header Wordmark & Titles
+        Uses a complex exponential ease-out curve (cubic-bezier(0.16, 1, 0.3, 1))
+      */}
+      <div 
+        className="flex flex-col items-center text-center mb-8 transition-all duration-[700ms]"
+        style={{
+          transform: isMounted ? 'translateY(0) scale(1)' : 'translateY(8px) scale(0.99)',
+          opacity: isMounted ? 1 : 0,
+          transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
       >
-        {/* Minimal Context Tag */}
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] font-mono font-black text-slate-900 uppercase tracking-[0.3em]">
-            system_registration
-          </span>
+        <h1 className="font-['Syne'] text-2xl font-medium tracking-tight text-neutral-900 mb-1.5">
+          Create account
+        </h1>
+        <p className="font-['Plus_Jakarta_Sans'] text-xs text-neutral-400">
+          Join and build your calm writing space
+        </p>
+      </div>
+
+      {/* 
+        LAYER 2: Form Fields & Inputs
+        Delayed by 120ms, slides up slightly slower for an organic editorial flow
+      */}
+      <form 
+        className="flex flex-col gap-5 transition-all duration-[850ms]"
+        onSubmit={handleSubmit}
+        style={{
+          transform: isMounted ? 'translateY(0)' : 'translateY(12px)',
+          opacity: isMounted ? 1 : 0,
+          transitionDelay: '120ms',
+          transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
+      >
+        {/* Name Input */}
+        <div className="flex flex-col gap-1.5">
+          <label className="font-['Plus_Jakarta_Sans'] text-[11px] font-medium text-neutral-500 px-0.5">
+            Preferred name
+          </label>
+          <input
+            type="text"
+            required
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full bg-white/50 border border-neutral-200 rounded-xl px-4 py-2.5 font-['Plus_Jakarta_Sans'] text-sm font-normal text-neutral-900 placeholder-neutral-300 outline-none transition-all duration-200 focus:border-neutral-400 focus:bg-white focus:ring-0"
+          />
         </div>
 
-        <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
-          {/* Frameless Input Section */}
-          <div className="flex flex-col gap-6">
-            {/* Preferred Name Field */}
-            {/* FIX: Darkened baseline step to match login form specifications */}
-            <div className="flex flex-col gap-1 relative border-b-2 border-slate-900 pb-1 focus-within:border-black transition-colors duration-300">
-              <label className="text-[10px] font-mono font-black text-slate-900 uppercase tracking-widest">
-                preferred name
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="block w-full bg-transparent text-base font-sans font-medium text-slate-950 placeholder-slate-500/30 focus:outline-none py-1 tracking-wide"
-              />
-            </div>
+        {/* Email Input */}
+        <div className="flex flex-col gap-1.5">
+          <label className="font-['Plus_Jakarta_Sans'] text-[11px] font-medium text-neutral-500 px-0.5">
+            Email address
+          </label>
+          <input
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="name@domain.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full bg-white/50 border border-neutral-200 rounded-xl px-4 py-2.5 font-['Plus_Jakarta_Sans'] text-sm font-normal text-neutral-900 placeholder-neutral-300 outline-none transition-all duration-200 focus:border-neutral-400 focus:bg-white focus:ring-0"
+          />
+        </div>
 
-            {/* Email Field Line */}
-            {/* FIX: Darkened baseline step to match login form specifications */}
-            <div className="flex flex-col gap-1 relative border-b-2 border-slate-900 pb-1 focus-within:border-black transition-colors duration-300">
-              <label className="text-[10px] font-mono font-black text-slate-900 uppercase tracking-widest">
-                user_id // email
-              </label>
-              <input
-                type="email"
-                required
-                autoComplete="email"
-                placeholder="name@domain.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full bg-transparent text-base font-sans font-medium text-slate-950 placeholder-slate-500/30 focus:outline-none py-1 tracking-wide"
-              />
-            </div>
-
-            {/* Password Field Line */}
-            {/* FIX: Darkened baseline step to match login form specifications */}
-            <div className="flex flex-col gap-1 relative border-b-2 border-slate-900 pb-1 focus-within:border-black transition-colors duration-300">
-              <div className="flex justify-between items-center">
-                <label className="text-[10px] font-mono font-black text-slate-900 uppercase tracking-widest">
-                  passkey // security
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-[10px] font-mono font-black text-slate-600 hover:text-black tracking-wide uppercase focus:outline-none transition-colors duration-150 cursor-pointer"
-                >
-                  {showPassword ? "[hide]" : "[show]"}
-                </button>
-              </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                autoComplete="new-password"
-                placeholder={showPassword ? "password_string" : "••••••••••••"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                /* FIX: Show password fix applied. Collapses font tracking when character output is exposed */
-                className={`block w-full bg-transparent text-base font-mono font-bold text-slate-950 placeholder-slate-500/30 focus:outline-none py-1 ${
-                  showPassword ? "tracking-normal" : "tracking-widest"
-                }`}
-              />
-            </div>
-          </div>
-
-          {/* Action Infrastructure */}
-          <div className="flex flex-col gap-5 mt-4">
-            {/* Full-width Frameless Border Button */}
+        {/* Password Input */}
+        <div className="flex flex-col gap-1.5">
+          <label className="font-['Plus_Jakarta_Sans'] text-[11px] font-medium text-neutral-500 px-0.5">
+            Password
+          </label>
+          <div className="relative flex items-center">
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              autoComplete="new-password"
+              placeholder="••••••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-white/50 border border-neutral-200 rounded-xl pl-4 pr-10 py-2.5 font-['Plus_Jakarta_Sans'] text-sm font-normal text-neutral-900 placeholder-neutral-300 outline-none transition-all duration-200 focus:border-neutral-400 focus:bg-white focus:ring-0"
+            />
             <button
-              type="submit"
-              disabled={isSubmitting}
-              className="h-12 w-full flex justify-center items-center px-8 text-xs font-mono font-black tracking-widest uppercase rounded-full border border-slate-900/20 text-slate-950 bg-slate-900/5 backdrop-blur-[2px] hover:bg-gradient-to-r hover:from-slate-900 hover:to-slate-800 hover:text-white hover:border-transparent hover:shadow-[0_4px_20px_rgba(15,23,42,0.15)] transition-all duration-500 ease-out disabled:opacity-40 cursor-pointer"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 text-neutral-400 hover:text-neutral-600 focus:outline-none transition-colors duration-150 cursor-pointer"
             >
-              {isSubmitting ? (
-                <div className="flex items-center gap-3">
-                  <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
-                  </span>
-                  <span className="tracking-[0.15em] font-bold lowercase">
-                    initializing vault...
-                  </span>
-                </div>
+              {showPassword ? (
+                <EyeOff className="h-4 w-4 stroke-[1.5]" />
               ) : (
-                "create credentials"
+                <Eye className="h-4 w-4 stroke-[1.5]" />
               )}
             </button>
-
-            {/* Clean Vertical Switch Text */}
-            <div className="text-center pt-1">
-              <button
-                type="button"
-                onClick={onSwitchToLogin}
-                className="text-xs font-mono text-slate-800 hover:text-black focus:outline-none cursor-pointer group relative py-0.5"
-              >
-                Already registered?{" "}
-                <span className="underline underline-offset-4 font-black">
-                  Login to space
-                </span>
-              </button>
-            </div>
-
-            {/* Error messaging footprint row */}
-            {error && (
-              <div className="flex items-start gap-2 border-l-2 border-rose-700 pl-3 py-0.5 mt-1 transition-all duration-300">
-                <p className="text-sm font-mono font-bold text-rose-950 tracking-wide leading-relaxed lowercase">
-                  fault: {error.toLowerCase()}
-                </p>
-              </div>
-            )}
           </div>
-        </form>
+        </div>
+
+        {/* 
+          LAYER 3: Submit Action & Interface Swaps
+          Delayed by 200ms, lifts with sharp precision
+        */}
+        <div 
+          className="flex flex-col gap-4 mt-2 transition-all duration-[900ms]"
+          style={{
+            transform: isMounted ? 'translateY(0)' : 'translateY(16px)',
+            opacity: isMounted ? 1 : 0,
+            transitionDelay: '200ms',
+            transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
+          }}
+        >
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="h-11 w-full flex justify-center items-center rounded-xl bg-neutral-900 font-['Plus_Jakarta_Sans'] text-xs font-medium text-white shadow-xs transition-all duration-300 hover:bg-neutral-800 active:scale-98 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+          >
+            {isSubmitting ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
+                <span>Creating workspace...</span>
+              </div>
+            ) : (
+              "Get Started"
+            )}
+          </button>
+
+          {error && (
+            <div className="rounded-lg bg-red-50/60 border border-red-100 px-3.5 py-2 mt-1">
+              <p className="font-['Plus_Jakarta_Sans'] text-[11px] font-medium text-red-600/90 leading-normal">
+                {error}
+              </p>
+            </div>
+          )}
+
+          <div className="text-center pt-2">
+            <button
+              type="button"
+              onClick={onSwitchToLogin}
+              className="font-['Plus_Jakarta_Sans'] text-xs text-neutral-400 hover:text-neutral-700 focus:outline-none transition-colors duration-150 cursor-pointer"
+            >
+              Already have an account? <span className="text-neutral-600 font-medium hover:underline underline-offset-4">Sign in</span>
+            </button>
+          </div>
+        </div>
+      </form>
+      
+      {/* 
+        LAYER 4: Peripheral System Label
+        Flips on softly with a late 350ms delay
+      */}
+      <div 
+        className="text-center mt-10 transition-opacity duration-[1000ms]"
+        style={{
+          opacity: isMounted ? 1 : 0,
+          transitionDelay: '350ms'
+        }}
+      >
+        <span className="font-['JetBrains_Mono'] text-[9px] uppercase tracking-widest text-neutral-300">
+          v1.0.0 // notebook_core
+        </span>
       </div>
     </div>
-  );
+  </div>
+);
 }
