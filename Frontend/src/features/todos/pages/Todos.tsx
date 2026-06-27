@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, Trash2, Plus, X, Loader2 } from "lucide-react";
+import { Check, Trash2, Plus, X, Loader2, FilePlus } from "lucide-react";
 import { useTodos } from "../hooks/handle.todos.hook";
 
 export const TasksPage: React.FC = () => {
@@ -27,7 +27,6 @@ export const TasksPage: React.FC = () => {
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4 sm:px-6 py-6 relative min-h-0 flex flex-col">
-      
       {/* Responsive Dashboard Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 shrink-0">
         <div>
@@ -38,7 +37,7 @@ export const TasksPage: React.FC = () => {
             Quick operational action items.
           </p>
         </div>
-        <button 
+        <button
           onClick={() => setIsPopupOpen(true)}
           className="flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-medium hover:bg-slate-800 transition-all shadow-md shadow-slate-900/10 active:scale-98"
         >
@@ -104,11 +103,11 @@ export const TasksPage: React.FC = () => {
               </div>
 
               {/* Responsive: Instantly clickable icon on mobile, clear hover state trigger structure on desktop */}
-              <button 
+              <button
                 type="button"
                 disabled={mutating}
                 onClick={(e) => {
-                  e.stopPropagation(); 
+                  e.stopPropagation();
                   handleDeleteTask(task.id);
                 }}
                 className="p-2 text-slate-400 hover:text-rose-600 rounded-xl transition-all md:opacity-0 md:group-hover:opacity-100 disabled:opacity-30 shrink-0 hover:bg-rose-50/50"
@@ -119,79 +118,136 @@ export const TasksPage: React.FC = () => {
           ))
         )}
       </div>
+      {/* ─── STANDARDIZED MODAL INTERFACE ─── */}
+      {isPopupOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 select-none">
+          {/* LAYER 1: Immediate Backdrop Lens
+      Activates instantly without delayed transition interpolations
+    */}
+          <div
+            onClick={() => !mutating && setIsPopupOpen(false)}
+            className="absolute inset-0 bg-neutral-900/15 backdrop-blur-xs"
+          />
 
-      {/* ─── SLOW-PHASE DIALOG OVERLAY CREATOR MODULE ─── */}
-      <div 
-        className={`fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 transition-all duration-500 ease-in-out ${
-          isPopupOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        {/* Soft dark lens overlay */}
-        <div
-          onClick={() => !mutating && setIsPopupOpen(false)}
-          className={`absolute inset-0 bg-slate-900/10 transition-all duration-700 ${
-            isPopupOpen ? "backdrop-blur-md" : "backdrop-blur-none"
-          }`}
-        />
+          {/* LAYER 2: Snappy Card Container 
+      Uses the exact same high-performance animation from your notebook modal
+    */}
+          <div
+            className="relative w-full max-w-sm bg-white border border-neutral-200/60 rounded-2xl p-6 shadow-[0_20px_50px_rgba(27,27,27,0.06)] flex flex-col overflow-hidden"
+            style={{
+              animation:
+                "modalSlideIn 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards",
+            }}
+          >
+            {/* Keyframe Injector */}
+            <style>{`
+        @keyframes modalSlideIn {
+          from { transform: translateY(12px) scale(0.98); opacity: 0; }
+          to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        @keyframes flowerRotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
 
-        {/* Slow-Phase Card Grow Container */}
-        <div 
-          className={`relative w-full max-w-md bg-white rounded-[2rem] p-5 sm:p-6 border border-white/60 shadow-[0_20px_50px_rgba(0,0,0,0.06)] flex flex-col gap-5 sm:gap-6 transform transition-all duration-[600ms] cubic-bezier(0.16, 1, 0.3, 1) ${
-            isPopupOpen ? "scale-100 translate-y-0 opacity-100" : "scale-[0.93] translate-y-4 opacity-0"
-          }`}
-        >
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <span className="text-sm font-semibold text-slate-800 tracking-tight">
-              Create New Task
-            </span>
+            {/* PERFORMANCE-OPTIMIZED FLOWER BACKGROUND WATERMARK */}
+            <div
+              className="absolute -top-16 -right-16 pointer-events-none select-none text-neutral-900/[0.08] origin-center mix-blend-multiply"
+              style={{ animation: "flowerRotate 90s linear infinite" }}
+            >
+              <svg
+                width="220"
+                height="220"
+                viewBox="0 0 100 100"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+                strokeDasharray="1.5 2.5"
+              >
+                <path d="M50,50 A25,25 0 1,1 50,0 A25,25 0 1,1 50,50" />
+                <path d="M50,50 A25,25 0 1,1 100,50 A25,25 0 1,1 50,50" />
+                <path d="M50,50 A25,25 0 1,1 50,100 A25,25 0 1,1 50,50" />
+                <path d="M50,50 A25,25 0 1,1 0,50 A25,25 0 1,1 50,50" />
+                <path d="M50,50 A25,25 0 1,1 85.35,14.65 A25,25 0 1,1 50,50" />
+                <path d="M50,50 A25,25 0 1,1 85.35,85.35 A25,25 0 1,1 50,50" />
+                <path d="M50,50 A25,25 0 1,1 14.65,85.35 A25,25 0 1,1 50,50" />
+                <path d="M50,50 A25,25 0 1,1 14.65,14.65 A25,25 0 1,1 50,50" />
+              </svg>
+            </div>
+
+            {/* SUBTLE LINE-MASK BLENDING LAYER */}
+            <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-white/40 to-white/95 pointer-events-none z-[1]" />
+
+            {/* Close Button */}
             <button
               type="button"
+              disabled={mutating}
               onClick={() => setIsPopupOpen(false)}
-              className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+              className="absolute right-4 top-4 rounded-xl p-1.5 text-neutral-400 hover:bg-neutral-50 hover:text-neutral-700 transition-colors z-50 cursor-pointer disabled:opacity-40"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4 stroke-[1.8]" />
             </button>
+
+            {/* Content Container */}
+            <div className="relative z-10 flex flex-col h-full w-full">
+              {/* Header Icon + Label */}
+              <div className="flex flex-col items-center text-center mb-6 pt-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-50 border border-neutral-100 text-neutral-800 mb-3 shadow-xs">
+                  <FilePlus className="h-5 w-5 stroke-[1.5]" />
+                </div>
+                <h2 className="font-['Plus_Jakarta_Sans'] text-base font-semibold tracking-tight text-neutral-800">
+                  Create New Task
+                </h2>
+                <p className="font-['Plus_Jakarta_Sans'] text-xs text-neutral-400 mt-1 max-w-[240px]">
+                  Map out your actionable benchmarks for this workspace space.
+                </p>
+              </div>
+
+              <form onSubmit={onConfirmCreate} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="font-['Plus_Jakarta_Sans'] text-[11px] font-bold tracking-wider text-neutral-400 uppercase px-0.5 text-left">
+                    Task Title Description
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    autoFocus
+                    disabled={mutating}
+                    placeholder="What needs to be done?"
+                    value={taskContent}
+                    onChange={(e) => setTaskContent(e.target.value)}
+                    className="w-full bg-neutral-50/50 border border-neutral-200/80 rounded-xl px-4 py-2.5 font-['Plus_Jakarta_Sans'] text-sm font-medium text-neutral-900 placeholder-neutral-300 outline-none transition-all duration-200 focus:border-neutral-400 focus:bg-white focus:ring-0 disabled:opacity-60"
+                  />
+                </div>
+
+                {/* Action Row Layout Block */}
+                <div className="flex items-center gap-2 mt-2">
+                  <button
+                    type="button"
+                    disabled={mutating}
+                    onClick={() => setIsPopupOpen(false)}
+                    className="flex-1 h-10 rounded-xl border border-neutral-200 font-['Plus_Jakarta_Sans'] text-xs font-semibold text-neutral-600 transition-colors hover:bg-neutral-50 active:scale-98 disabled:opacity-40"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={mutating || !taskContent.trim()}
+                    className="flex-1 h-10 flex justify-center items-center gap-1.5 rounded-xl bg-slate-900 font-['Plus_Jakarta_Sans'] text-xs font-semibold text-white shadow-md shadow-slate-900/5 transition-all duration-200 hover:bg-slate-800 active:scale-98 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+                  >
+                    {mutating && (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    )}
+                    <span>{mutating ? "Confirming..." : "Confirm Entry"}</span>
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-
-          <form onSubmit={onConfirmCreate} className="flex flex-col gap-5 sm:gap-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-left">
-                Task Title Description
-              </label>
-              <input
-                type="text"
-                required
-                autoFocus={isPopupOpen}
-                disabled={mutating}
-                placeholder="What needs to be done?"
-                value={taskContent}
-                onChange={(e) => setTaskContent(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200/60 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-slate-300 transition-colors placeholder:text-slate-400 text-slate-800 disabled:opacity-60"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-end gap-2 pt-1">
-              <button
-                type="button"
-                disabled={mutating}
-                onClick={() => setIsPopupOpen(false)}
-                className="w-full sm:w-auto order-2 sm:order-1 px-4 py-2 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors rounded-xl disabled:opacity-40"
-              >
-                Cancel
-              </button>
-
-              <button
-                type="submit"
-                disabled={mutating || !taskContent.trim()}
-                className="w-full sm:w-auto order-1 sm:order-2 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-medium hover:bg-slate-800 transition-all shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {mutating && <Loader2 className="w-3 h-3 animate-spin" />}
-                <span>{mutating ? "Confirming..." : "Confirm Entry"}</span>
-              </button>
-            </div>
-          </form>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -3,99 +3,16 @@ import {
   Folder,
   MoreHorizontal,
   Plus,
-  BookOpen,
-  Star,
-  Clock,
-  Tag,
-  Briefcase,
-  Share2,
-  Settings,
-  RefreshCw,
   Search,
   SlidersHorizontal,
   Menu,
   X,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { TasksPage } from "../../todos/pages/Todos";
 import { CreateNotebookModal } from "../components/CreateNotebookPopup";
 import useNotebook from "../hooks/notebook.hook";
-
-// const notebooks = [
-//   {
-//     id: "cmqt42h1f000020u9oaiqvbg8",
-//     name: "Psychology",
-//     userId: "cmq5j7mm40000tgu90c7thayi",
-//     createdAt: "2026-06-25T06:18:23.812Z",
-//     updatedAt: "2026-06-25T06:18:23.812Z",
-//     notes: [
-//       { id: "note_p1", title: "Introduction to Psychology 👩‍🏫" },
-//       { id: "note_p2", title: "Week 1, lecture notes" },
-//       { id: "note_p3", title: "What is Psychology? History & Schools" },
-//       { id: "note_p4", title: "Behavioral vs Cognitive Theories" },
-//       { id: "note_p5", title: "Brain Anatomy & Neural Pathways" },
-//     ],
-//   },
-//   {
-//     id: "cmqt42sei000120u9nxs8mqs0",
-//     name: "Groceries",
-//     userId: "cmq5j7mm40000tgu90c7thayi",
-//     createdAt: "2026-06-25T06:18:38.538Z",
-//     updatedAt: "2026-06-25T06:18:38.538Z",
-//     notes: [
-//       { id: "note_g1", title: "Grocery list 🛒" },
-//       { id: "note_g2", title: "Weekly Meal Prep Ingredients" },
-//       { id: "note_g3", title: "Snacks for the office" },
-//       { id: "note_g4", title: "Sunday Dinner Supplies" },
-//     ],
-//   },
-//   {
-//     id: "cmqt43abc000220u9zxcvbnm1",
-//     name: "Thai Chicken",
-//     userId: "cmq5j7mm40000tgu90c7thayi",
-//     createdAt: "2026-06-25T06:20:12.441Z",
-//     updatedAt: "2026-06-25T06:22:45.110Z",
-//     notes: [
-//       { id: "note_t1", title: "Recipe 🍛" },
-//       { id: "note_t2", title: "Sauce Mix Ratios" },
-//       { id: "note_t3", title: "Alternative Marinades (Ginger/Garlic)" },
-//     ],
-//   },
-//   {
-//     id: "cmqt44xyz000320u9lkjhgfd2",
-//     name: "Autumn is coming",
-//     userId: "cmq5j7mm40000tgu90c7thayi",
-//     createdAt: "2026-06-25T06:25:01.992Z",
-//     updatedAt: "2026-06-25T06:25:01.992Z",
-//     notes: [
-//       { id: "note_a1", title: "I'm exhausted all over again 🫣" },
-//       { id: "note_a2", title: "Late night musings & warm tea" },
-//       { id: "note_a3", title: "Cozy sweaters to buy this season" },
-//       { id: "note_a4", title: "October reading list goals" },
-//       { id: "note_a5", title: "Rainy afternoon playlists" },
-//     ],
-//   },
-// ];
-
-const NOTEBOOK_THEMES = [
-  { bg: "#FCE7F3", accent: "#DB2777" },
-  { bg: "#DBEAFE", accent: "#2563EB" },
-  { bg: "#F3F4F6", accent: "#4B5563" },
-  { bg: "#DCFCE7", accent: "#16A34A" },
-];
-
-const getThemeForName = (name: string) => {
-  const normalizedName = name.toLowerCase().trim();
-  if (normalizedName.includes("psychology")) return NOTEBOOK_THEMES[0];
-  if (
-    normalizedName.includes("groceries") ||
-    normalizedName.includes("grocery")
-  )
-    return NOTEBOOK_THEMES[1];
-  if (normalizedName.includes("chicken") || normalizedName.includes("thai"))
-    return NOTEBOOK_THEMES[2];
-  if (normalizedName.includes("autumn")) return NOTEBOOK_THEMES[3];
-  return NOTEBOOK_THEMES[0];
-};
+import Sidebar from "./Sidebar";
 
 const formatTimestamp = (dateString: string) => {
   try {
@@ -107,154 +24,26 @@ const formatTimestamp = (dateString: string) => {
 };
 
 export const NotebookDashboard: React.FC = () => {
-  const userName = localStorage.getItem("userName") || "Anastasia";
-  const email = localStorage.getItem("email") || "anastasia@icylab.co";
 
-  const { notebooks, createNotebook } = useNotebook();
- 
+  const { notebooks, createNotebook, isNotebookLoading, getNotebookStyles } =
+    useNotebook();
+  const [isCreateNotebookPopupOpen, setIsCreateNotebookPopupOpen] =
+    useState(false);
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<"notebooks" | "tasks">(
     "notebooks",
   );
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [isCreateNotebookPopupOpen, setIsCreateNotebookPopupOpen] =
-    useState(false);
 
   return (
     <div className="flex w-full h-screen bg-[#F8FAFC] text-slate-800 antialiased font-sans overflow-hidden select-none relative">
       {/* 1. LEFT SIDEBAR COMPONENT (Hidden on Mobile, Visible on MD up) */}
-      <aside className="w-64 border-r border-slate-200/60 bg-white flex flex-col justify-between p-6 shrink-0 h-full z-20 hidden md:flex">
-        <div className="space-y-8">
-          <div className="flex items-center gap-3 pb-2">
-            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-lg shadow-sm">
-              🐼
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold tracking-tight text-slate-800">
-                {userName}
-              </h4>
-              <p className="text-xs text-slate-400 truncate max-w-[140px]">
-                {email}
-              </p>
-            </div>
-          </div>
-
-          <nav className="space-y-6">
-            <div>
-              <p className="px-3 text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">
-                Main
-              </p>
-              <div className="space-y-0.5">
-                <button
-                  onClick={() => setCurrentView("notebooks")}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl transition-all ${
-                    currentView === "notebooks"
-                      ? "bg-slate-100 text-slate-900"
-                      : "text-slate-500 hover:text-slate-800 hover:bg-slate-50"
-                  }`}
-                >
-                  <BookOpen className="w-4 h-4 opacity-80" /> Notebooks
-                </button>
-                <button
-                  onClick={() => setCurrentView("tasks")}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl transition-all ${
-                    currentView === "tasks"
-                      ? "bg-slate-100 text-slate-900"
-                      : "text-slate-500 hover:text-slate-800 hover:bg-slate-50"
-                  }`}
-                >
-                  <Clock className="w-4 h-4 opacity-80" /> Tasks
-                </button>
-                <button className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors">
-                  <Star className="w-4 h-4 opacity-70" /> Favorites
-                </button>
-                <button className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors">
-                  <Tag className="w-4 h-4 opacity-70" /> Tags
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <p className="px-3 text-[10px] font-bold text-slate-400 tracking-wider uppercase mb-2">
-                Order
-              </p>
-              <div className="space-y-0.5">
-                <button className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors">
-                  <Folder className="w-4 h-4 opacity-70" /> Notebooks
-                </button>
-                <button className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors">
-                  <Briefcase className="w-4 h-4 opacity-70" /> Projects
-                </button>
-                <button className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors">
-                  <Share2 className="w-4 h-4 opacity-70" /> Shared
-                </button>
-              </div>
-            </div>
-          </nav>
-        </div>
-
-        <div className="space-y-1.5 pt-4 border-t border-slate-100">
-          <button className="w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
-            <Settings className="w-3.5 h-3.5" /> Settings
-          </button>
-          <button className="w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors">
-            <RefreshCw className="w-3.5 h-3.5" /> Sync Status
-          </button>
-        </div>
-      </aside>
-
-      {/* MOBILE FLOATING DRAWER BAR OVERLAY PANEL */}
-      <div
-        className={`fixed inset-0 bg-slate-950/20 backdrop-blur-md z-40 md:hidden transition-all duration-300 ${
-          isMobileSidebarOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setIsMobileSidebarOpen(false)}
+      <Sidebar
+        setCurrentView={setCurrentView}
+        currentView={currentView}
+        isMobileSidebarOpen={isMobileSidebarOpen}
+        setIsMobileSidebarOpen={setIsMobileSidebarOpen}
       />
-      <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-white border-r border-slate-200 p-6 z-50 flex flex-col justify-between transform transition-transform duration-500 ease-out md:hidden ${
-          isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="space-y-8">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-            <div className="flex items-center gap-2">
-              <div className="text-lg">🐼</div>
-              <h4 className="text-sm font-semibold text-slate-800 truncate max-w-[140px]">
-                {userName}
-              </h4>
-            </div>
-            <button
-              onClick={() => setIsMobileSidebarOpen(false)}
-              className="p-1 text-slate-400 hover:text-slate-600"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-          <nav className="space-y-6">
-            <div className="space-y-1">
-              <button
-                onClick={() => {
-                  setCurrentView("notebooks");
-                  setIsMobileSidebarOpen(false);
-                }}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl ${currentView === "notebooks" ? "bg-slate-100 text-slate-900" : "text-slate-500"}`}
-              >
-                <BookOpen className="w-4 h-4" /> Notebooks
-              </button>
-              <button
-                onClick={() => {
-                  setCurrentView("tasks");
-                  setIsMobileSidebarOpen(false);
-                }}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl ${currentView === "tasks" ? "bg-slate-100 text-slate-900" : "text-slate-500"}`}
-              >
-                <Clock className="w-4 h-4" /> Tasks
-              </button>
-            </div>
-          </nav>
-        </div>
-      </aside>
 
       {/* 2. DYNAMIC CENTER WORKSPACE CORE CONTAINER */}
       <main className="flex-1 flex flex-col min-w-0 h-full relative">
@@ -307,66 +96,273 @@ export const NotebookDashboard: React.FC = () => {
                     Select a primary study node container.
                   </p>
                 </div>
-                <button 
+                <button
                   onClick={() => setIsCreateNotebookPopupOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 text-white rounded-xl text-xs font-medium hover:bg-slate-800 transition-all shadow-md shadow-slate-900/10 active:scale-95">
+                  className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 text-white rounded-xl text-xs font-medium hover:bg-slate-800 transition-all shadow-md shadow-slate-900/10 active:scale-95"
+                >
                   <Plus className="w-3.5 h-3.5" />{" "}
                   <span className="hidden xxs:inline">New Space</span>
                 </button>
               </div>
 
-              {/* Grid Canvas Responsive Breakdown Layout */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {notebooks.map((notebook) => {
-                  const theme = getThemeForName(notebook.name);
-                  const noteCount = notebook.notes?.length || 0;
-
-                  return (
+              {/* SKELETON LOADING STATE BLOCK */}
+              {isNotebookLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 animate-pulse">
+                  {[1, 2, 3].map((skeletonId) => (
                     <div
-                      key={notebook.id}
-                      style={{ backgroundColor: theme.bg }}
-                      className="group relative rounded-[1.75rem] sm:rounded-[2rem] p-5 sm:p-6 border border-white/40 shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),_0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[inset_0_2px_4px_rgba(255,255,255,0.6),_0_12px_30px_rgba(0,0,0,0.04)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between min-h-[180px] sm:min-h-[200px] cursor-pointer"
+                      key={skeletonId}
+                      className="rounded-[2rem] p-5 sm:p-6 bg-slate-100/70 border border-slate-200/40 flex flex-col justify-between min-h-[190px] sm:min-h-[210px]"
                     >
                       <div>
-                        <div className="flex justify-between items-center mb-4 sm:mb-6">
-                          <div
-                            className="p-2 sm:p-2.5 rounded-xl bg-white shadow-[0_4px_10px_rgba(0,0,0,0.01)] border border-slate-100"
-                            style={{ color: theme.accent }}
-                          >
-                            <Folder className="w-4 h-4 fill-current opacity-80" />
-                          </div>
-                          <button className="p-1 text-slate-400 hover:text-slate-600 transition-colors">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </button>
+                        <div className="flex justify-between items-center mb-5">
+                          <div className="h-8 w-8 rounded-xl bg-slate-200" />
+                          <div className="h-4 w-4 rounded-full bg-slate-200" />
                         </div>
-
-                        <h3 className="text-base sm:text-lg font-semibold text-slate-800 tracking-tight mb-3 sm:mb-4">
-                          {notebook.name}
-                        </h3>
-
-                        {noteCount > 0 && (
-                          <ul className="space-y-1.5 mb-4 opacity-75">
-                            {notebook.notes.slice(0, 4).map((note, idx) => (
-                              <li
-                                key={note.id ?? idx}
-                                className="text-xs text-slate-600 truncate flex items-center gap-1.5"
-                              >
-                                <span className="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0" />
-                                <span className="truncate">{note.title}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                        <div className="h-5 bg-slate-200 rounded-lg w-2/3 mb-4" />
+                        <div className="space-y-2">
+                          <div className="h-3 bg-slate-200 rounded-sm w-5/6" />
+                          <div className="h-3 bg-slate-200 rounded-sm w-4/5" />
+                          <div className="h-3 bg-slate-200 rounded-sm w-3/4" />
+                        </div>
                       </div>
-
-                      <div className="mt-auto flex items-center justify-between pt-3 border-t border-slate-200/30 text-[10px] sm:text-[11px] text-slate-400">
-                        <span>{noteCount} thoughts</span>
-                        <span>{formatTimestamp(notebook.updatedAt)}</span>
+                      <div className="flex justify-between pt-3 border-t border-slate-200/40 mt-4">
+                        <div className="h-3 bg-slate-200 rounded-sm w-12" />
+                        <div className="h-3 bg-slate-200 rounded-sm w-16" />
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                  {notebooks.map((notebook, index) => {
+                    const { theme, shape } = getNotebookStyles(notebook.id);
+                    const noteCount = notebook.notes?.length || 0;
+                    const hasMoreThanFive = noteCount > 5;
+                    const isMenuOpen = activeMenuId === notebook.id;
+
+                    return (
+                      <Link
+                        to={`/${notebook.id}`}
+                        key={notebook.id}
+                        style={{
+                          backgroundColor: theme.bg,
+                          borderColor: `${theme.accent}15`,
+                          // Progressively staggers each card's entry to create a cascading wave effect
+                          animationDelay: `${index * 65}ms`,
+                        }}
+                        // Click wrapper logic safely untangles child button events
+                        onClick={() => {
+                          if (activeMenuId) setActiveMenuId(null);
+                        }}
+                        // DESIGN FIX: Reduced lift to 3px, softened hover shadows, and applied a smooth deceleration curve
+                        className="group relative rounded-[2rem] p-6 border shadow-[inset_0_1px_2px_rgba(255,255,255,0.5),_0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.02)] hover:-translate-y-[0.5px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between min-h-[200px] sm:min-h-[220px] cursor-pointer overflow-hidden opacity-0 scale-95 translate-y-4 animate-[cardReveal_750ms_cubic-bezier(0.16,1,0.3,1)_both]"
+                      >
+                        {/* GLOBAL INTERACTIVE KINETIC PIPELINE INJECTION */}
+                        <style>{`
+    @keyframes cardReveal {
+      from { 
+        opacity: 0; 
+        transform: translateY(20px) scale(0.96); 
+        filter: blur(4px);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+  `}</style>
+
+                        {/* HARDWARE-ACCELERATED BACKGROUND GLOW EFFECT */}
+                        <div
+                          className="absolute -top-6 -right-6 w-32 h-32 rounded-full pointer-events-none select-none opacity-25 group-hover:opacity-35 group-hover:scale-105 transition-all duration-500 ease-out mix-blend-multiply blur-xl"
+                          style={{ backgroundColor: theme.accent }}
+                        />
+
+                        {/* DECOUPLED INDEPENDENT VECTOR SHAPE OVERLAY */}
+                        <div
+                          className="absolute top-0 right-0 pointer-events-none select-none opacity-[0.06] group-hover:opacity-[0.12] group-hover:rotate-6 group-hover:scale-102 transition-all duration-500 ease-out origin-top-right"
+                          style={{ color: theme.accent }}
+                        >
+                          <svg
+                            width="130"
+                            height="130"
+                            viewBox="0 0 120 120"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            {shape}
+                          </svg>
+                        </div>
+
+                        {/* Core Content Layout Area */}
+                        <div className="relative z-10 flex flex-col justify-between h-full w-full">
+                          <div>
+                            {/* Header Action Control Bar */}
+                            <div className="flex justify-between items-start mb-5 relative">
+                              <div
+                                className="p-2 rounded-xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.02)] border transition-transform duration-300 group-hover:scale-105"
+                                style={{
+                                  color: theme.accent,
+                                  borderColor: `${theme.accent}12`,
+                                }}
+                              >
+                                <Folder className="w-4 h-4 fill-current opacity-90" />
+                              </div>
+
+                              {/* DROPDOWN ANCHOR LAYER */}
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation(); // Prevents clicking the card option mistakenly
+                                    setActiveMenuId(
+                                      isMenuOpen ? null : notebook.id,
+                                    );
+                                  }}
+                                  className={`p-1.5 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                                    isMenuOpen
+                                      ? "bg-white text-neutral-800 rotate-90 shadow-xs"
+                                      : "text-neutral-400 hover:text-neutral-700 hover:bg-white/50"
+                                  }`}
+                                >
+                                  {isMenuOpen ? (
+                                    <X className="w-4 h-4 stroke-[2.5]" />
+                                  ) : (
+                                    <MoreHorizontal className="w-4 h-4" />
+                                  )}
+                                </button>
+
+                                {/* PREMIUM CONTEXT DROPDOWN MENU */}
+                                {isMenuOpen && (
+                                  <div
+                                    className="absolute right-0 top-9 w-38 bg-white border border-neutral-200/50 rounded-xl shadow-[0_12px_28px_rgba(0,0,0,0.06),0_2px_4px_rgba(0,0,0,0.01)] py-1.5 z-50 origin-top-right transition-all animate-[dropdownSnap_250ms_cubic-bezier(0.16,1,0.3,1)_both]"
+                                    onClick={(e) => e.stopPropagation()} // Keeps menu active on inner clicks
+                                  >
+                                    <style>{`
+                @keyframes dropdownSnap {
+                  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+                  to { opacity: 1; transform: scale(1) translateY(0); }
+                }
+              `}</style>
+
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActiveMenuId(null);
+                                        console.log(
+                                          "Renaming notebook:",
+                                          notebook.id,
+                                        );
+                                      }}
+                                      className="w-full text-left px-3.5 py-1.5 text-xs font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors flex items-center gap-2"
+                                    >
+                                      <span>Rename Space</span>
+                                    </button>
+
+                                    <div className="h-[1px] bg-neutral-100 my-1 mx-2" />
+
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActiveMenuId(null);
+                                        if (
+                                          confirm(
+                                            `Are you sure you want to delete "${notebook.name}"?`,
+                                          )
+                                        ) {
+                                          console.log(
+                                            "Deleting space ID:",
+                                            notebook.id,
+                                          );
+                                        }
+                                      }}
+                                      className="w-full text-left px-3.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50/60 transition-colors flex items-center gap-2"
+                                    >
+                                      <span>Delete Space</span>
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="mb-4">
+                              <h3
+                                style={
+                                  {
+                                    "--accent-hover": theme.accent,
+                                  } as React.CSSProperties
+                                }
+                                className="font-['Plus_Jakarta_Sans'] text-base sm:text-[17px] font-semibold text-neutral-800 tracking-tight leading-snug transition-colors duration-300 group-hover:text-[var(--accent-hover)]"
+                              >
+                                {notebook.name}
+                              </h3>
+                              <div
+                                className="h-[1px] w-8 mt-1.5 rounded-full transition-all duration-300 origin-left group-hover:w-full opacity-30"
+                                style={{ backgroundColor: theme.accent }}
+                              />
+                            </div>
+
+                            {noteCount === 0 ? (
+                              <p className="font-['Plus_Jakarta_Sans'] text-xs italic text-neutral-400/80 py-1 px-1">
+                                No notes written yet
+                              </p>
+                            ) : (
+                              <div className="relative mb-5 px-0.5">
+                                <ul className="space-y-2 pb-1">
+                                  {notebook.notes
+                                    .slice(0, 5)
+                                    .map((note, idx) => (
+                                      <li
+                                        key={note.id ?? idx}
+                                        className="font-['Plus_Jakarta_Sans'] text-xs font-medium text-neutral-600 hover:text-neutral-900 transition-colors duration-150 truncate flex items-center gap-2"
+                                      >
+                                        <span
+                                          className="w-1 h-1 rounded-full bg-neutral-300 transition-colors duration-300 shrink-0"
+                                          style={{
+                                            backgroundColor: `${theme.accent}60`,
+                                          }}
+                                        />
+                                        <span className="truncate tracking-normal">
+                                          {note.title || "Untitled Draft"}
+                                        </span>
+                                      </li>
+                                    ))}
+                                </ul>
+
+                                {hasMoreThanFive && (
+                                  <div
+                                    className="absolute bottom-0 left-0 right-0 h-6 pointer-events-none transition-opacity duration-300 group-hover:opacity-40"
+                                    style={{
+                                      backgroundImage: `linear-gradient(to bottom, transparent 0%, ${theme.bg} 90%)`,
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Clean Metadata Footer Segment */}
+                          <div className="mt-auto flex items-center justify-between pt-3.5 border-t border-neutral-900/5 font-['Plus_Jakarta_Sans'] text-[11px] font-semibold tracking-tight text-neutral-400/90">
+                            <span
+                              className="capitalize font-bold"
+                              style={{ color: theme.accent }}
+                            >
+                              {noteCount}{" "}
+                              {noteCount === 1 ? "thought" : "thoughts"}
+                            </span>
+                            <span className="font-medium text-neutral-400">
+                              {formatTimestamp(notebook.updatedAt)}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 

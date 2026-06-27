@@ -44,7 +44,7 @@ export function AppRouter() {
       />
 
       <Route 
-        path="/edit"
+        path="/:notebookId"
         element={
           <ProtectedRoute>
             <EditorPage />
