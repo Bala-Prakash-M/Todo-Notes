@@ -33,9 +33,7 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            editor.isActive("bold")
-              ? "bg-white/20 text-white"
-              : "text-slate-400 hover:text-white"
+            editor.isActive("bold") ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
           }`}
         >
           <Bold className="h-4 w-4" />
@@ -53,9 +51,7 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            editor.isActive("italic")
-              ? "bg-white/20 text-white"
-              : "text-slate-400 hover:text-white"
+            editor.isActive("italic") ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
           }`}
         >
           <Italic className="h-4 w-4" />
@@ -75,9 +71,7 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            editor.isActive("underline")
-              ? "bg-white/20 text-white"
-              : "text-slate-400 hover:text-white"
+            editor.isActive("underline") ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
           }`}
         >
           <UnderlineIcon className="h-4 w-4" />
@@ -95,9 +89,7 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleHighlight().run()}
           className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            editor.isActive("highlight")
-              ? "bg-white/20 text-white"
-              : "text-slate-400 hover:text-white"
+            editor.isActive("highlight") ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
           }`}
         >
           <Highlighter className="h-4 w-4" />
@@ -129,13 +121,9 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
       <div className="group relative flex items-center justify-center">
         <button
           type="button"
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            editor.isActive("heading", { level: 2 })
-              ? "bg-white/20 text-white"
-              : "text-slate-400 hover:text-white"
+            editor.isActive("heading", { level: 2 }) ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
           }`}
         >
           <Heading2 className="h-4 w-4" />
@@ -153,9 +141,7 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            editor.isActive("bulletList")
-              ? "bg-white/20 text-white"
-              : "text-slate-400 hover:text-white"
+            editor.isActive("bulletList") ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
           }`}
         >
           <List className="h-4 w-4" />
@@ -173,9 +159,7 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            editor.isActive("blockquote")
-              ? "bg-white/20 text-white"
-              : "text-slate-400 hover:text-white"
+            editor.isActive("blockquote") ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
           }`}
         >
           <Quote className="h-4 w-4" />
@@ -198,9 +182,7 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
             }
           }}
           className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            editor.isActive("link")
-              ? "bg-white/20 text-white"
-              : "text-slate-400 hover:text-white"
+            editor.isActive("link") ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
           }`}
         >
           <LinkIcon className="h-4 w-4" />
@@ -218,9 +200,7 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            editor.isActive("codeBlock")
-              ? "bg-white/20 text-white"
-              : "text-slate-400 hover:text-white"
+            editor.isActive("codeBlock") ? "bg-white/20 text-white" : "text-slate-400 hover:text-white"
           }`}
         >
           <Terminal className="h-4 w-4" />
@@ -240,7 +220,7 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
             const selectedText = editor.state.doc.textBetween(
               editor.state.selection.from,
               editor.state.selection.to,
-              "\n",
+              "\n"
             );
             navigator.clipboard.writeText(selectedText);
           }}
@@ -257,40 +237,23 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
     </>
   );
 
-  // --- RENDERING DISPATCH ROUTE ---
+  // --- RENDERING ROUTE WITH ADAPTIVE TYPED OFFSETS ---
+  
+  // Set up safe mobile vs desktop offset values using our double-casting architecture
+  const currentOffset = isMobile ? [0, 75] : [0, 10];
 
-  if (isMobile) {
-    // Evaluate if text selection is currently active
-    const { from, to } = editor.state.selection;
-    const hasSelection = from !== to;
-
-    if (!hasSelection) return null;
-
-    return (
-      <div
-        className="
-          fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-50
-          flex items-center gap-1 overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/95 p-2
-          shadow-[0_12px_40px_-12px_rgba(15,23,42,0.3)] backdrop-blur-md select-none
-          animate-cardReveal transform-gpu [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
-        "
-      >
-        {renderToolbarContent()}
-      </div>
-    );
-  }
-
-  // Desktop Baseline Configuration
   return (
     <BubbleMenu
       editor={editor}
-      options={{
-        placement: "top",
-        // Safe double-casting strategy: overrides the structural check completely
-        // while avoiding the banned 'any' primitive keyword.
-        offset: [0, 10] as unknown as boolean,
+      options={{ 
+        placement: "top", 
+        // Cast via unknown to bypass the strict Tippy/Tiptap version type check
+        offset: (currentOffset as unknown) as boolean
       }}
-      className="flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-900/95 p-1.5 text-white shadow-xl backdrop-blur-md"
+      className={`
+        flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-900/95 p-1.5 text-white shadow-xl backdrop-blur-md select-none
+        ${isMobile ? "max-w-[calc(100vw-2rem)] overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-2.5" : ""}
+      `}
     >
       {renderToolbarContent()}
     </BubbleMenu>
