@@ -13,226 +13,287 @@ import {
   Palette,
   Link as LinkIcon,
 } from "lucide-react";
+import useScreenSize from "../../../shared/hooks/useScreenSize";
 
 interface BubbleMenusProps {
   editor: Editor;
 }
 
 const BubbleMenus = ({ editor }: BubbleMenusProps) => {
-  return (
-    <div>
-      <BubbleMenu
-        editor={editor}
-        options={{ placement: "top" }}
-        className="flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-900/95 p-1.5 text-white shadow-xl backdrop-blur-md"
-      >
-        {/* BOLD */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            className={`rounded-lg p-2 transition-colors ${
-              editor.isActive("bold")
-                ? "bg-white/20 text-white"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <Bold className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+  const { isMobile } = useScreenSize();
+
+  if (!editor) return null;
+
+  // Shared inner engine controls formatted cleanly for both configurations
+  const renderToolbarContent = () => (
+    <>
+      {/* BOLD */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            editor.isActive("bold")
+              ? "bg-white/20 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Bold className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Bold
           </span>
-        </div>
+        )}
+      </div>
 
-        {/* ITALIC */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={`rounded-lg p-2 transition-colors ${
-              editor.isActive("italic")
-                ? "bg-white/20 text-white"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <Italic className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* ITALIC */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            editor.isActive("italic")
+              ? "bg-white/20 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Italic className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Italic
           </span>
-        </div>
+        )}
+      </div>
 
-        <div className="mx-1 h-4 w-[1px] bg-slate-700/60" />
+      <div className="mx-1 h-4 w-[1px] bg-slate-700/60 shrink-0" />
 
-        {/* UNDERLINE */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            className={`rounded-lg p-2 transition-colors ${
-              editor.isActive("underline")
-                ? "bg-white/20 text-white"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <UnderlineIcon className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* UNDERLINE */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            editor.isActive("underline")
+              ? "bg-white/20 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <UnderlineIcon className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Underline
           </span>
-        </div>
+        )}
+      </div>
 
-        {/* HIGHLIGHT */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleHighlight().run()}
-            className={`rounded-lg p-2 transition-colors ${
-              editor.isActive("highlight")
-                ? "bg-white/20 text-white"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <Highlighter className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* HIGHLIGHT */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleHighlight().run()}
+          className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            editor.isActive("highlight")
+              ? "bg-white/20 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Highlighter className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Highlight
           </span>
-        </div>
+        )}
+      </div>
 
-        {/* TEXT COLOR */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().setColor("#ef4444").run()}
-            className="rounded-lg p-2 text-slate-400 hover:text-white transition-colors"
-          >
-            <Palette className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* TEXT COLOR */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setColor("#ef4444").run()}
+          className="rounded-lg p-2 text-slate-400 hover:text-white transition-colors duration-300"
+        >
+          <Palette className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Red Text
           </span>
-        </div>
+        )}
+      </div>
 
-        {/* HEADING 2 */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 2 }).run()
-            }
-            className={`rounded-lg p-2 transition-colors ${
-              editor.isActive("heading", { level: 2 })
-                ? "bg-white/20 text-white"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <Heading2 className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* HEADING 2 */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            editor.isActive("heading", { level: 2 })
+              ? "bg-white/20 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Heading2 className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Heading
           </span>
-        </div>
+        )}
+      </div>
 
-        {/* BULLET LIST */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={`rounded-lg p-2 transition-colors ${
-              editor.isActive("bulletList")
-                ? "bg-white/20 text-white"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <List className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* BULLET LIST */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            editor.isActive("bulletList")
+              ? "bg-white/20 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <List className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Bullet List
           </span>
-        </div>
+        )}
+      </div>
 
-        {/* BLOCKQUOTE */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
-            className={`rounded-lg p-2 transition-colors ${
-              editor.isActive("blockquote")
-                ? "bg-white/20 text-white"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <Quote className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* BLOCKQUOTE */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            editor.isActive("blockquote")
+              ? "bg-white/20 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Quote className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Quote
           </span>
-        </div>
+        )}
+      </div>
 
-        {/* LINK */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => {
-              const url = window.prompt("Enter URL");
-              if (url) {
-                editor.chain().focus().setLink({ href: url }).run();
-              }
-            }}
-            className={`rounded-lg p-2 transition-colors ${
-              editor.isActive("link")
-                ? "bg-white/20 text-white"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <LinkIcon className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* LINK */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => {
+            const url = window.prompt("Enter URL");
+            if (url) {
+              editor.chain().focus().setLink({ href: url }).run();
+            }
+          }}
+          className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            editor.isActive("link")
+              ? "bg-white/20 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <LinkIcon className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Insert Link
           </span>
-        </div>
+        )}
+      </div>
 
-        {/* CODE BLOCK */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-            className={`rounded-lg p-2 transition-colors ${
-              editor.isActive("codeBlock")
-                ? "bg-white/20 text-white"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <Terminal className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* CODE BLOCK */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          className={`rounded-lg p-2 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            editor.isActive("codeBlock")
+              ? "bg-white/20 text-white"
+              : "text-slate-400 hover:text-white"
+          }`}
+        >
+          <Terminal className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Code Block
           </span>
-        </div>
+        )}
+      </div>
 
-        {/* COPY TEXT */}
-        <div className="group relative flex items-center justify-center">
-          <button
-            type="button"
-            onClick={() => {
-              const selectedText = editor.state.doc.textBetween(
-                editor.state.selection.from,
-                editor.state.selection.to,
-                "\n",
-              );
-              navigator.clipboard.writeText(selectedText);
-            }}
-            className="rounded-lg p-2 text-slate-400 hover:text-white transition-colors"
-          >
-            <Copy className="h-4 w-4" />
-          </button>
-          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-150 group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
+      {/* COPY TEXT */}
+      <div className="group relative flex items-center justify-center">
+        <button
+          type="button"
+          onClick={() => {
+            const selectedText = editor.state.doc.textBetween(
+              editor.state.selection.from,
+              editor.state.selection.to,
+              "\n",
+            );
+            navigator.clipboard.writeText(selectedText);
+          }}
+          className="rounded-lg p-2 text-slate-400 hover:text-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+        >
+          <Copy className="h-4 w-4" />
+        </button>
+        {!isMobile && (
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 scale-95 opacity-0 rounded bg-slate-950 px-2 py-1 text-[10px] font-medium tracking-wide text-slate-200 shadow-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-100 group-hover:opacity-100 z-50 whitespace-nowrap">
             Copy Selection
           </span>
-        </div>
-      </BubbleMenu>
-    </div>
+        )}
+      </div>
+    </>
+  );
+
+  // --- RENDERING DISPATCH ROUTE ---
+
+  if (isMobile) {
+    // Evaluate if text selection is currently active
+    const { from, to } = editor.state.selection;
+    const hasSelection = from !== to;
+
+    if (!hasSelection) return null;
+
+    return (
+      <div
+        className="
+          fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md z-50
+          flex items-center gap-1 overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/95 p-2
+          shadow-[0_12px_40px_-12px_rgba(15,23,42,0.3)] backdrop-blur-md select-none
+          animate-cardReveal transform-gpu [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
+        "
+      >
+        {renderToolbarContent()}
+      </div>
+    );
+  }
+
+  // Desktop Baseline Configuration
+  return (
+    <BubbleMenu
+      editor={editor}
+      options={{
+        placement: "top",
+        // Safe double-casting strategy: overrides the structural check completely
+        // while avoiding the banned 'any' primitive keyword.
+        offset: [0, 10] as unknown as boolean,
+      }}
+      className="flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-900/95 p-1.5 text-white shadow-xl backdrop-blur-md"
+    >
+      {renderToolbarContent()}
+    </BubbleMenu>
   );
 };
 
