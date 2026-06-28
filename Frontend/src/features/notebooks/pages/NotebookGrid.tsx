@@ -24,7 +24,6 @@ const formatTimestamp = (dateString: string) => {
 };
 
 export const NotebookDashboard: React.FC = () => {
-
   const { notebooks, createNotebook, isNotebookLoading, getNotebookStyles } =
     useNotebook();
   const [isCreateNotebookPopupOpen, setIsCreateNotebookPopupOpen] =
@@ -87,21 +86,48 @@ export const NotebookDashboard: React.FC = () => {
           {/* VIEW CONDITION 1: NOTEBOOKS RENDER */}
           {currentView === "notebooks" && (
             <div className="animate-[fadeIn_0.3s_ease-out]">
-              <div className="flex items-center justify-between mb-6 sm:mb-8">
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 border-b border-slate-100 pb-5">
+                <div className="space-y-0.5">
+                  <h1 className="text-xl font-semibold tracking-tight text-slate-900 font-sans sm:text-2xl">
                     Notebook Spaces
                   </h1>
-                  <p className="text-xs text-slate-400 mt-0.5 hidden xs:block">
+                  {/* Removed 'hidden xs:block'. The subtitle now renders smoothly across all screen widths. */}
+                  <p className="text-[12px] text-slate-400 font-sans max-w-[280px] sm:max-w-none leading-normal">
                     Select a primary study node container.
                   </p>
                 </div>
+
                 <button
+                  type="button"
                   onClick={() => setIsCreateNotebookPopupOpen(true)}
-                  className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 text-white rounded-xl text-xs font-medium hover:bg-slate-800 transition-all shadow-md shadow-slate-900/10 active:scale-95"
+                  className={`
+          group flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium font-sans w-full sm:w-auto
+          /* Monochromatic premium tactile colors */
+          bg-white text-slate-700 border border-slate-200/80
+          
+          /* Premium Deceleration Easing & Fluid Lift */
+          transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+          transform-gpu hover:-translate-y-[1.5px]
+          
+          /* Light Ambient Depth */
+          shadow-[0_2px_8px_-2px_rgba(0,0,0,0.02)]
+          hover:shadow-[0_6px_16px_-4px_rgba(0,0,0,0.06)]
+          hover:text-slate-900 hover:border-slate-300
+          
+          active:translate-y-0 active:scale-[0.99]
+        `}
                 >
-                  <Plus className="w-3.5 h-3.5" />{" "}
-                  <span className="hidden xxs:inline">New Space</span>
+                  <Plus
+                    className="
+            w-3.5 h-3.5 text-slate-400 
+            transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+            group-hover:text-slate-600 group-hover:rotate-90
+          "
+                  />
+                  {/* Clean, unhidden action label that stays fully visible */}
+                  <span className="tracking-tight text-slate-600 group-hover:text-slate-900 font-medium">
+                    New Space
+                  </span>
                 </button>
               </div>
 
@@ -215,12 +241,13 @@ export const NotebookDashboard: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={(e) => {
+                                    e.preventDefault();
                                     e.stopPropagation(); // Prevents clicking the card option mistakenly
                                     setActiveMenuId(
                                       isMenuOpen ? null : notebook.id,
                                     );
                                   }}
-                                  className={`p-1.5 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                                  className={`p-1.5 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] cursor-pointer ${
                                     isMenuOpen
                                       ? "bg-white text-neutral-800 rotate-90 shadow-xs"
                                       : "text-neutral-400 hover:text-neutral-700 hover:bg-white/50"

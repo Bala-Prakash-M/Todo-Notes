@@ -36,5 +36,36 @@ export const notebookAPI = {
     );
 
     return response.data.data;
+  },
+
+  async updateNotebook(
+    token: string,
+    id: string,
+    name: string
+  ): Promise<Notebook> {
+    const response = await api.patch<{ data: Notebook }>(
+      `/notebook/${id}`,
+      { name },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.data;
+  },
+
+  async deleteNotebook(
+    token: string,
+    id: string
+  ): Promise<void> {
+    await api.delete(
+      `/notebook/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
   }
-}
+};

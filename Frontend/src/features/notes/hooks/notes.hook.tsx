@@ -12,7 +12,12 @@ const useNotes = () => {
   const { notebookId } = useParams<{ notebookId: string }>();
 
   useEffect(() => {
-    if (!token || !notebookId) return;
+    if (!token || !notebookId) {
+      const timer = setTimeout(() => {
+        setNotes([]);
+      }, 0);
+      return () => clearTimeout(timer);
+    }
 
     const fetchAllNotes = async (): Promise<void> => {
       try {
@@ -36,11 +41,66 @@ const useNotes = () => {
     fetchAllNotes();
   }, [notebookId, token]);
 
+  const createNote = async (title: string, content: string): Promise<Note> => {
+    if (!token || !notebookId) {
+      throw new Error("Missing authentication token or active notebook selection");
+    }
+    setIsNotesLoading(true);
+    try {
+      const newNote = await notesAPI.createNote(token, notebookId, title, content);
+      setNotes((prev) => [newNote, ...prev]);
+      return newNote;
+    } catch (error) {
+      const errMsg = error instanceof Error ? error.message : "Failed to create note";
+      setNotesError(errMsg);
+      throw error;
+    } finally {
+      setIsNotesLoading(false);
+    }
+  };
+
+  const updateNote = async (id: string, title: string, content: string): Promise<Note> => {
+    if (!token || !notebookId) {
+      throw new Error("Missing authentication token or active notebook selection");
+    }
+    try {
+      const updatedNote = await notesAPI.updateNote(token, notebookId, id, title, content);
+      setNotes((prev) =>
+        prev.map((n) => (n.id === id ? updatedNote : n))
+      );
+      return updatedNote;
+    } catch (error) {
+      const errMsg = error instanceof Error ? error.message : "Failed to update note";
+      setNotesError(errMsg);
+      throw error;
+    }
+  };
+
+  const deleteNote = async (id: string): Promise<void> => {
+    if (!token || !notebookId) {
+      throw new Error("Missing authentication token or active notebook selection");
+    }
+    setIsNotesLoading(true);
+    try {
+      await notesAPI.deleteNote(token, notebookId, id);
+      setNotes((prev) => prev.filter((n) => n.id !== id));
+    } catch (error) {
+      const errMsg = error instanceof Error ? error.message : "Failed to delete note";
+      setNotesError(errMsg);
+      throw error;
+    } finally {
+      setIsNotesLoading(false);
+    }
+  };
+
   return {
     notes,
     setNotes,
     isNotesLoading,
     notesError,
+    createNote,
+    updateNote,
+    deleteNote,
   };
 };
 

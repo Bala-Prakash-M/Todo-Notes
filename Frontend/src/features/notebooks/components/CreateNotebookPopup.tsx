@@ -21,7 +21,9 @@ export function CreateNotebookModal({
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50);
     } else {
-      setNotebookName("");
+      setTimeout(() => {
+        setNotebookName("");
+      }, 0);
     }
   }, [isOpen]);
 

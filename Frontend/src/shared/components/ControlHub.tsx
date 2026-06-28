@@ -53,7 +53,10 @@ export const ControlHub: React.FC = () => {
       const frameTimeout = setTimeout(() => searchInputRef.current?.focus(), 50);
       return () => clearTimeout(frameTimeout);
     } else {
-      setSearchQuery("");
+      const timer = setTimeout(() => {
+        setSearchQuery("");
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [isSearchOpen]);
 

@@ -9,7 +9,7 @@ import { ProtectedRoute } from "./ProtectedRouter";
 import { LandingPage } from "../../features/Landing/pages/LandingPage";
 import { TasksPage } from "../../features/todos/pages/Todos";
 import { NotebookDashboard } from "../../features/notebooks/pages/NotebookGrid";
-import { EditorPage } from "../../features/notes/pages/EditorPage";
+import { WorkspacePage } from "../../features/notes/pages/WorkspacePage";
 
 export function AppRouter() {
   return (
@@ -47,7 +47,7 @@ export function AppRouter() {
         path="/:notebookId"
         element={
           <ProtectedRoute>
-            <EditorPage />
+            <WorkspacePage />
           </ProtectedRoute>
         }
       />

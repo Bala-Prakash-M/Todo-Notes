@@ -121,6 +121,46 @@ const useNotebook = () => {
     }
   };
 
+  const updateNotebook = async (id: string, name: string): Promise<void> => {
+    setIsNotebookLoading(true);
+    setNotebookError(null);
+
+    try {
+      const response = await notebookAPI.updateNotebook(token!, id, name);
+      setNotebooks((prev) =>
+        prev.map((nb) => (nb.id === id ? { ...nb, name: response.name } : nb))
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        setNotebookError(error.message);
+      } else {
+        setNotebookError("Something went wrong");
+      }
+      throw error;
+    } finally {
+      setIsNotebookLoading(false);
+    }
+  };
+
+  const deleteNotebook = async (id: string): Promise<void> => {
+    setIsNotebookLoading(true);
+    setNotebookError(null);
+
+    try {
+      await notebookAPI.deleteNotebook(token!, id);
+      setNotebooks((prev) => prev.filter((nb) => nb.id !== id));
+    } catch (error) {
+      if (error instanceof Error) {
+        setNotebookError(error.message);
+      } else {
+        setNotebookError("Something went wrong");
+      }
+      throw error;
+    } finally {
+      setIsNotebookLoading(false);
+    }
+  };
+
   const getNotebookStyles = (id: string) => {
   if (!id) return { theme: NOTEBOOK_THEMES[0], shape: NOTEBOOK_SHAPES[0].path };
 
@@ -148,6 +188,8 @@ const useNotebook = () => {
   return {
     notebooks,
     createNotebook,
+    updateNotebook,
+    deleteNotebook,
     notebookError,
     isNotebookLoading,
     getNotebookStyles,

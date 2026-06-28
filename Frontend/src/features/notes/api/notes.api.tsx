@@ -13,5 +13,57 @@ export const notesAPI = {
     );
 
     return response.data.data;
+  },
+
+  async createNote(
+    token: string,
+    notebookId: string,
+    title: string,
+    content: string
+  ): Promise<Note> {
+    const response = await api.post<{ data: Note }>(
+      `/notes/${notebookId}`,
+      { title, content },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.data;
+  },
+
+  async updateNote(
+    token: string,
+    notebookId: string,
+    id: string,
+    title: string,
+    content: string
+  ): Promise<Note> {
+    const response = await api.put<{ data: Note }>(
+      `/notes/${notebookId}/${id}`,
+      { title, content },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data.data;
+  },
+
+  async deleteNote(
+    token: string,
+    notebookId: string,
+    id: string
+  ): Promise<void> {
+    await api.delete(
+      `/notes/${notebookId}/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
   }
-}
+};
