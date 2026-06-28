@@ -260,16 +260,15 @@ const BubbleMenus = ({ editor }: BubbleMenusProps) => {
   // --- RENDERING ROUTE WITH ADAPTIVE TYPED OFFSETS ---
 
   // Set up safe mobile vs desktop offset values using our double-casting architecture
-  const verticalOffset = isMobile ? 15 : 12;
-  const currentOffset = [0, verticalOffset];
+  const verticalDistance = isMobile ? 24 : 22;
+  const currentOffset = [0, verticalDistance];
 
   return (
     <BubbleMenu
       editor={editor}
       options={{
-        // Switch placement to bottom so it renders beneath the text selection bounds
         placement: "bottom",
-        // Safe double-casting strategy to satisfy the strict Tiptap/Tippy linter compiler
+        // Safe double-cast strategy to bypass version specific type gaps
         offset: currentOffset as unknown as boolean,
       }}
       className={`
