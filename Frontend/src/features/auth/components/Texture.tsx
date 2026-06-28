@@ -1,15 +1,26 @@
 import React from "react";
+import useScreenSize from "../../../shared/hooks/useScreenSize";
 
 export const ArchitecturalTexture: React.FC = () => {
+  const { isMobile } = useScreenSize();
+
+  // --- 1. PURE HARDWARE ACCELERATED MOBILE CANVAS STRATEGY ---
+  if (isMobile) {
+    return (
+      <div 
+        className="fixed inset-0 w-full h-full z-0 pointer-events-none select-none overflow-hidden bg-[#cbd1db]"
+        style={{ willChange: 'opacity' }}
+      >
+        {/* Soft, ultra-lightweight mobile structural vignette depth (0% CPU impact) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#d7dce4]/40 via-transparent to-[#f1f4f9]/30" />
+        <div className="absolute inset-0 shadow-[inset_0_0_80px_rgba(15,23,42,0.03)]" />
+      </div>
+    );
+  }
+
+  // --- 2. LUXURY KINETIC DESKTOP CONFIGURATION ---
   return (
     <div className="fixed inset-0 w-full h-full z-0 pointer-events-none select-none overflow-hidden bg-[#d2d7df]">
-      
-      {/* 
-        OPTIMIZATION MATRIX:
-        1. Stripped all SVG <filter> pipelines entirely to eliminate CPU layout paint lag.
-        2. Swapped dense keyframe multi-properties for simple, clean transforms.
-        3. Replaced complex path shadow matrices with ultra-faint layout divider lines for an elegant, architectural feel.
-      */}
       <style>{`
         @keyframes subtleDriftOne {
           0% { transform: translate3d(0, 0, 0) scale(1.02); }
@@ -48,10 +59,8 @@ export const ArchitecturalTexture: React.FC = () => {
         preserveAspectRatio="xMidYMid slice"
         aria-hidden="true"
       >
-        {/* Base Layer Canvas Floor */}
         <rect width="1440" height="900" fill="#cbd1db" />
 
-        {/* LAYER 1: Top-down wave landscape */}
         <path
           className="wave-layer-1 transform-gpu"
           d="M 0,200 C 300,150 450,50 700,100 C 950,150 1100,300 1250,200 C 1400,100 1350,0 1440,0 L 1440,900 L 0,900 Z"
@@ -60,7 +69,6 @@ export const ArchitecturalTexture: React.FC = () => {
           strokeWidth="1"
         />
 
-        {/* LAYER 2: Mid-tier layout contour */}
         <path
           className="wave-layer-2 transform-gpu"
           d="M 0,350 C 250,300 350,150 600,220 C 850,290 1000,450 1200,350 C 1350,250 1380,100 1440,80 L 1440,900 L 0,900 Z"
@@ -69,7 +77,6 @@ export const ArchitecturalTexture: React.FC = () => {
           strokeWidth="1"
         />
 
-        {/* LAYER 3: The sweeping bottom-right layout feature */}
         <path
           className="wave-layer-3 transform-gpu"
           d="M 0,760 C 180,720 280,840 480,780 C 680,720 880,860 1080,800 C 1220,760 1340,830 1440,780 L 1440,900 L 0,900 Z"
@@ -79,10 +86,8 @@ export const ArchitecturalTexture: React.FC = () => {
         />
       </svg>
 
-      {/* Pure hardware CSS vignette drop-shadow layers (No CPU repaint overhead) */}
       <div className="absolute inset-0 shadow-[inset_0_0_100px_rgba(15,23,42,0.04)] pointer-events-none" />
       
-      {/* Soft lighting matrix overlay */}
       <div 
         className="absolute inset-0 bg-gradient-to-tr from-slate-900/[0.02] via-transparent to-white/[0.1] pointer-events-none"
         style={{ mixBlendMode: "overlay" }}

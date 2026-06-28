@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { authApi } from "../api/auth.api";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useAuth } from "../hooks/auth.hook";
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
@@ -10,10 +10,10 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  const { handleRegisterSubmit, registerError, registerIsSubmitting } = useAuth();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -23,25 +23,7 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setIsSubmitting(true);
-
-    const apiCall = authApi.register({ name, email, password });
-    const delay = new Promise((resolve) => setTimeout(resolve, 2000));
-
-    try {
-      const [response] = await Promise.all([apiCall, delay]);
-      console.log(response);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Account registration failed. Please check your connection.");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    await handleRegisterSubmit(e, name, email, password);
   };
 
   return (
@@ -159,10 +141,10 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
         >
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={registerIsSubmitting}
             className="h-11 w-full flex justify-center items-center rounded-xl bg-neutral-900 font-['Plus_Jakarta_Sans'] text-xs font-medium text-white shadow-xs transition-all duration-300 hover:bg-neutral-800 active:scale-98 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
           >
-            {isSubmitting ? (
+            {registerIsSubmitting ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
                 <span>Creating workspace...</span>
@@ -172,10 +154,10 @@ export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
             )}
           </button>
 
-          {error && (
+          {registerError && (
             <div className="rounded-lg bg-red-50/60 border border-red-100 px-3.5 py-2 mt-1">
               <p className="font-['Plus_Jakarta_Sans'] text-[11px] font-medium text-red-600/90 leading-normal">
-                {error}
+                {registerError}
               </p>
             </div>
           )}
