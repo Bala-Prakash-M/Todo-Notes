@@ -1,12 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-interface TextureSVGContentProps {
-  onEnterSpace?: () => void;
-}
+export const TextureSVGContent: React.FC = () => {
 
-export const TextureSVGContent: React.FC<TextureSVGContentProps> = ({
-  onEnterSpace,
-}) => {
+  const navigate = useNavigate();
+
   return (
     <div
       className="w-full max-w-4xl mx-auto text-center flex flex-col items-center space-y-6 pb-12 lg:pb-0 select-none antialiased pt-10 sm:pt-14 lg:pt-16"
@@ -34,7 +32,7 @@ export const TextureSVGContent: React.FC<TextureSVGContentProps> = ({
         <div className="pt-2 animate-[fadeIn_2.4s_ease-out_both]">
           <button
             type="button"
-            onClick={onEnterSpace}
+            onClick={() => navigate("/notebooks")}
             className="group relative inline-flex items-center space-x-4 text-xs font-medium tracking-[0.2em] text-[#2d363f] uppercase focus:outline-none"
           >
             <span className="relative py-1">
