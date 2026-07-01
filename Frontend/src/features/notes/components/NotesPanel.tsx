@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Plus, Search, Sparkles, Inbox, Folder } from "lucide-react";
+import { Plus, Search, Sparkles, Inbox, Folder, Columns } from "lucide-react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import type { Variants } from "framer-motion";
 import type { Note } from "../types/notes.types";
@@ -11,6 +11,8 @@ interface NotesPanelProps {
   onNoteCreate: () => Promise<void>;
   isLoading: boolean;
   notebookName: string;
+  isSidebarCollapsed?: boolean;
+  onToggleSidebar?: () => void;
 }
 
 const stripHtmlTags = (htmlContent: string): string => {
@@ -79,6 +81,8 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({
   onNoteCreate,
   isLoading,
   notebookName,
+  isSidebarCollapsed = false,
+  onToggleSidebar,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -117,44 +121,57 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({
             </div>
           </div>
 
-          {/* Premium Engineered New Note Button */}
-          <motion.button
-  onClick={onNoteCreate}
-  disabled={isLoading}
-  whileTap={{ opacity: 0.85 }}
-  transition={{ duration: 0.15, ease: "easeOut" }}
-  className="group flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors duration-200 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500/5 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
->
-  <div className="relative flex h-3.5 w-3.5 items-center justify-center">
-    <AnimatePresence mode="wait" initial={false}>
-      {isLoading ? (
-        <motion.div
-          key="loading"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="absolute inset-0 flex items-center justify-center"
-        >
-          {/* A quiet, non-rotating elegant pulse indicator instead of a frantic spinner */}
-          <div className="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-slate-500 animate-pulse" />
-        </motion.div>
-      ) : (
-        <motion.div
-          key="icon"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="absolute inset-0 flex items-center justify-center text-slate-400 transition-colors duration-200 group-hover:text-slate-600"
-        >
-          <Plus className="h-3.5 w-3.5 stroke-[2.2]" />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </div>
-  <span className="transition-colors duration-200">New Note</span>
-</motion.button>
+          <div className="flex items-center gap-2">
+            {isSidebarCollapsed && onToggleSidebar && (
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={onToggleSidebar}
+                className="hidden rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-200/50 hover:text-slate-600 md:inline-flex cursor-pointer"
+                title="Show Navigation"
+              >
+                <Columns className="h-3.5 w-3.5" />
+              </motion.button>
+            )}
+
+            {/* Premium Engineered New Note Button */}
+            <motion.button
+              onClick={onNoteCreate}
+              disabled={isLoading}
+              whileTap={{ opacity: 0.85 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="group flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors duration-200 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500/5 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+            >
+              <div className="relative flex h-3.5 w-3.5 items-center justify-center">
+                <AnimatePresence mode="wait" initial={false}>
+                  {isLoading ? (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      className="absolute inset-0 flex items-center justify-center"
+                    >
+                      {/* A quiet, non-rotating elegant pulse indicator instead of a frantic spinner */}
+                      <div className="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-slate-500 animate-pulse" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="icon"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      className="absolute inset-0 flex items-center justify-center text-slate-400 transition-colors duration-200 group-hover:text-slate-600"
+                    >
+                      <Plus className="h-3.5 w-3.5 stroke-[2.2]" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              <span className="transition-colors duration-200">New Note</span>
+            </motion.button>
+          </div>
         </div>
 
         {/* Search Bar */}

@@ -7,6 +7,7 @@ import useNotes from "../hooks/notes.hook";
 import useNotebook from "../../notebooks/hooks/notebook.hook";
 import useScreenSize from "../../../shared/hooks/useScreenSize";
 import { Menu, ChevronLeft } from "lucide-react";
+import { LayoutGroup, motion } from "framer-motion";
 
 export const WorkspacePage: React.FC = () => {
   const navigate = useNavigate();
@@ -174,36 +175,44 @@ export const WorkspacePage: React.FC = () => {
 
   // Desktop / Tablet layout (3-Panel responsive setup)
   return (
-    <div className="flex h-screen w-full bg-[#F8FAFC] overflow-hidden">
-      {/* Dynamic Slide-in Left Panel (Notebook Sidebar) */}
-      <NotebookSidebar
-        isCollapsed={isSidebarCollapsed || isDistractionFree}
-        onToggleCollapse={() => setIsSidebarCollapsed(true)}
-      />
-
-      {/* Middle Panel (Notes stream list) */}
-      {!isDistractionFree && (
-        <NotesPanel
-          notes={notes}
-          selectedNoteId={selectedNoteId}
-          onNoteSelect={setSelectedNoteId}
-          onNoteCreate={handleNoteCreate}
-          isLoading={isNotesLoading}
-          notebookName={activeNotebookName}
+    <LayoutGroup id="workspace-panels">
+      <motion.div layout className="flex h-screen w-full bg-[#F8FAFC] overflow-hidden">
+        {/* Dynamic Slide-in Left Panel (Notebook Sidebar) */}
+        <NotebookSidebar
+          isCollapsed={isSidebarCollapsed || isDistractionFree}
+          onToggleCollapse={() => setIsSidebarCollapsed(true)}
         />
-      )}
 
-      {/* Right Panel (Tiptap writing canvas) */}
-      <EditorPanel
-        note={activeNote}
-        onSave={handleNoteSave}
-        onDelete={handleNoteDelete}
-        isDistractionFree={isDistractionFree}
-        onToggleDistractionFree={() => setIsDistractionFree(!isDistractionFree)}
-        isSidebarCollapsed={isSidebarCollapsed}
-        onToggleSidebar={() => setIsSidebarCollapsed(false)}
-      />
-    </div>
+        {/* Middle Panel (Notes stream list) */}
+        {!isDistractionFree && (
+          <motion.div layout className="shrink-0">
+            <NotesPanel
+              notes={notes}
+              selectedNoteId={selectedNoteId}
+              onNoteSelect={setSelectedNoteId}
+              onNoteCreate={handleNoteCreate}
+              isLoading={isNotesLoading}
+              notebookName={activeNotebookName}
+              isSidebarCollapsed={isSidebarCollapsed}
+              onToggleSidebar={() => setIsSidebarCollapsed(false)}
+            />
+          </motion.div>
+        )}
+
+        {/* Right Panel (Tiptap writing canvas) */}
+        <motion.div layout className="flex min-w-0 flex-1">
+          <EditorPanel
+            note={activeNote}
+            onSave={handleNoteSave}
+            onDelete={handleNoteDelete}
+            isDistractionFree={isDistractionFree}
+            onToggleDistractionFree={() => setIsDistractionFree(!isDistractionFree)}
+            isSidebarCollapsed={isSidebarCollapsed}
+            onToggleSidebar={() => setIsSidebarCollapsed(false)}
+          />
+        </motion.div>
+      </motion.div>
+    </LayoutGroup>
   );
 };
 export default WorkspacePage;
