@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { Plus, Search, Sparkles, Inbox, Folder, Loader2 } from "lucide-react";
+import { Plus, Search, Sparkles, Inbox, Folder } from "lucide-react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import type { Variants } from "framer-motion";
 import type { Note } from "../types/notes.types";
 
 interface NotesPanelProps {
@@ -38,8 +39,9 @@ const formatDate = (dateString: string) => {
   }
 };
 
+
 // Ultra-bouncy fluid cascade configurations
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -50,16 +52,16 @@ const containerVariants = {
   },
 };
 
-const noteVariants = {
+const noteVariants: Variants = {
   hidden: { opacity: 0, y: 20, scale: 0.94 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: { 
-      type: "spring", 
-      stiffness: 480, // High energy snappy launch
-      damping: 22,    // Smooth settling control
+      type: "spring", // Safely inferred as spring literal union type
+      stiffness: 480,  // High energy snappy launch
+      damping: 22,     // Smooth settling control
       mass: 0.55       // Lightweight fluid motion
     },
   },
