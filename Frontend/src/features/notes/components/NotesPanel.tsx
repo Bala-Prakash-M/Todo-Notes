@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Plus, Search, Loader2, Sparkles, Inbox } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { Plus, Search, Sparkles, Inbox, Folder, Loader2 } from "lucide-react";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import type { Note } from "../types/notes.types";
 
 interface NotesPanelProps {
@@ -11,17 +12,63 @@ interface NotesPanelProps {
   notebookName: string;
 }
 
-// Safe client-side parser fallback for SSR/Testing environments
-class Parser {
-  parseFromString(markup: string, mimeType: string) {
-    if (typeof window !== "undefined" && window.DOMParser) {
-      return new DOMParser().parseFromString(markup, mimeType as DOMParserSupportedType);
-    }
-    // Simple regex fallback if DOMParser isn't available
-    const clean = markup.replace(/<\/?[^>]+(>|$)/g, "");
-    return { body: { textContent: clean } };
+const stripHtmlTags = (htmlContent: string): string => {
+  if (!htmlContent) return "No additional text";
+  if (typeof window === "undefined" || !window.DOMParser) {
+    return htmlContent.replace(/<\/?[^>]+(>|$)/g, "").trim() || "No additional text";
   }
-}
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, "text/html");
+    return doc.body.textContent?.trim() || "No additional text";
+  } catch {
+    return htmlContent.replace(/<\/?[^>]+(>|$)/g, "").trim() || "No additional text";
+  }
+};
+
+const formatDate = (dateString: string) => {
+  try {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return "Draft";
+  }
+};
+
+// Ultra-bouncy fluid cascade configurations
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.04,
+      delayChildren: 0.01,
+    },
+  },
+};
+
+const noteVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.94 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { 
+      type: "spring", 
+      stiffness: 480, // High energy snappy launch
+      damping: 22,    // Smooth settling control
+      mass: 0.55       // Lightweight fluid motion
+    },
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.94, 
+    transition: { duration: 0.12, ease: "easeInOut" } 
+  },
+};
 
 export const NotesPanel: React.FC<NotesPanelProps> = ({
   notes,
@@ -33,165 +80,239 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Remove HTML tags for clean text snippets
-  const getCleanSnippet = (htmlContent: string) => {
-    if (!htmlContent) return "No additional text";
-    const doc = new Parser().parseFromString(htmlContent, "text/html");
-    const text = doc.body.textContent || "";
-    return text.trim() || "No additional text";
-  };
+  const processedNotes = useMemo(() => {
+    return notes.map((note) => ({
+      ...note,
+      cleanSnippet: stripHtmlTags(note.content),
+    }));
+  }, [notes]);
 
-  // Filter notes based on search query
-  const filteredNotes = notes.filter((note) => {
-    const titleMatch = (note.title || "").toLowerCase().includes(searchQuery.toLowerCase());
-    const contentMatch = getCleanSnippet(note.content).toLowerCase().includes(searchQuery.toLowerCase());
-    return titleMatch || contentMatch;
-  });
+  const filteredNotes = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return processedNotes;
 
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-    } catch {
-      return "Draft";
-    }
-  };
+    return processedNotes.filter((note) => {
+      const titleMatch = (note.title || "").toLowerCase().includes(query);
+      const contentMatch = note.cleanSnippet.toLowerCase().includes(query);
+      return titleMatch || contentMatch;
+    });
+  }, [processedNotes, searchQuery]);
 
   return (
-    <div className="w-80 border-r border-slate-200/50 bg-[#F8FAFC] flex flex-col h-full shrink-0 select-none">
-      {/* Header Info & Create action */}
-      <div className="px-5 pt-6 pb-4 shrink-0 flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <div className="min-w-0">
-            <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+    <div className="w-80 border-r border-slate-200/60 bg-slate-50/50 flex flex-col h-full shrink-0 select-none antialiased">
+      {/* Header Info & Premium Action Button Layout */}
+      <div className="px-5 pt-6 pb-4 shrink-0 flex flex-col gap-3.5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <span className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
               Current Space
             </span>
-            <h2 className="text-sm font-bold text-slate-800 tracking-tight font-sans truncate pr-2 mt-0.5">
-              📁 {notebookName || "Active Notebook"}
-            </h2>
+            <div className="flex items-center gap-1.5 mt-0.5 group cursor-default">
+              <Folder className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+              <h2 className="text-sm font-semibold text-slate-800 tracking-tight truncate">
+                {notebookName || "Active Notebook"}
+              </h2>
+            </div>
           </div>
-          <button
-            onClick={onNoteCreate}
-            disabled={isLoading}
-            className="
-              flex items-center gap-1 rounded-xl border border-slate-200/80 bg-white px-3 py-1.5 text-[11px] font-medium text-slate-600 
-              shadow-[0_1px_3px_rgba(0,0,0,0.02)]
-              transition-all duration-300 transform-gpu
-              hover:-translate-y-[1px] hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300
-              active:translate-y-0 active:scale-[0.98] whitespace-nowrap cursor-pointer disabled:opacity-50
-            "
-          >
-            <Plus className="h-3 w-3 text-slate-400 stroke-[2.5]" />
-            <span>New Note</span>
-          </button>
+
+          {/* Premium Engineered New Note Button */}
+          <motion.button
+  onClick={onNoteCreate}
+  disabled={isLoading}
+  whileTap={{ opacity: 0.85 }}
+  transition={{ duration: 0.15, ease: "easeOut" }}
+  className="group flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors duration-200 hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500/5 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+>
+  <div className="relative flex h-3.5 w-3.5 items-center justify-center">
+    <AnimatePresence mode="wait" initial={false}>
+      {isLoading ? (
+        <motion.div
+          key="loading"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          className="absolute inset-0 flex items-center justify-center"
+        >
+          {/* A quiet, non-rotating elegant pulse indicator instead of a frantic spinner */}
+          <div className="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-slate-500 animate-pulse" />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="icon"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeInOut" }}
+          className="absolute inset-0 flex items-center justify-center text-slate-400 transition-colors duration-200 group-hover:text-slate-600"
+        >
+          <Plus className="h-3.5 w-3.5 stroke-[2.2]" />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+  <span className="transition-colors duration-200">New Note</span>
+</motion.button>
         </div>
 
         {/* Search Bar */}
-        <div className="relative">
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <div className="relative group">
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 group-focus-within:text-slate-600 transition-colors duration-200" />
           <input
             type="text"
             placeholder="Search reflections..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-200/30 border border-transparent rounded-xl pl-8.5 pr-3 py-1.5 text-xs focus:outline-none focus:bg-white focus:border-slate-200 transition-all placeholder:text-slate-400"
+            className="w-full bg-slate-200/40 border border-transparent rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-800 transition-all placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-200 focus:shadow-sm"
           />
         </div>
       </div>
 
       {/* Dynamic Sub-header Info */}
-      <div className="flex items-center justify-between px-5 py-2.5 border-t border-b border-slate-200/40 bg-white/50 shrink-0">
-        <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase tabular-nums">
+      <div className="flex items-center justify-between px-5 py-2 border-t border-b border-slate-200/40 bg-slate-50/20 shrink-0">
+        <span className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase tabular-nums">
           Notes Stream ({filteredNotes.length})
         </span>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {/* Loading Skeletons */}
-        {isLoading && notes.length === 0 && (
-          <div className="space-y-2.5 py-6 flex flex-col items-center justify-center animate-pulse">
-            <Loader2 className="h-5 w-5 text-slate-300 animate-spin stroke-[1.5] mb-1" />
-            <span className="text-[10px] font-medium text-slate-400 tracking-tight font-sans">
-              Gathering thoughts...
-            </span>
-          </div>
-        )}
+      <div className="flex-1 min-h-0 overflow-y-auto p-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <LayoutGroup id="notes-panel-group">
+          <AnimatePresence mode="popLayout">
+            {/* Elegant Skeleton State */}
+            {isLoading && notes.length === 0 && (
+              <motion.div 
+                key="loading-skeleton"
+                exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15 } }}
+                className="space-y-2 p-1"
+              >
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="rounded-xl border border-transparent p-4 bg-white/60 space-y-2 animate-pulse">
+                    <div className="flex justify-between items-center">
+                      <div className="h-3 w-1/2 bg-slate-200 rounded" />
+                      <div className="h-2 w-8 bg-slate-100 rounded" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="h-2.5 w-full bg-slate-200/70 rounded" />
+                      <div className="h-2.5 w-3/4 bg-slate-200/70 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
 
-        {/* Empty Space State (Zero total notes in notebook) */}
-        {!isLoading && notes.length === 0 && (
-          <div className="flex flex-col items-center justify-center text-center px-4 py-10 rounded-2xl border border-dashed border-slate-200/80 bg-white/40 mt-2">
-            <div className="p-3 bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.01)] border border-slate-100 mb-3 text-slate-400 animate-bounce">
-              <Sparkles className="h-4 w-4 stroke-[1.5]" />
-            </div>
-            <h4 className="text-xs font-semibold text-slate-800 tracking-tight font-sans">
-              Pristine Canvas
-            </h4>
-            <p className="text-[10px] text-slate-400 font-sans mt-1 max-w-[180px] leading-relaxed">
-              This space has no entries. Let's record your first reflection.
-            </p>
-            <button
-              onClick={onNoteCreate}
-              className="
-                mt-4 flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-[11px] font-semibold text-white bg-slate-900 hover:bg-slate-800 transition-all duration-200 active:scale-98 shadow-sm cursor-pointer
-              "
-            >
-              <Plus className="h-3 w-3 stroke-[2]" />
-              <span>Create note</span>
-            </button>
-          </div>
-        )}
-
-        {/* Search Empty State */}
-        {!isLoading && notes.length > 0 && filteredNotes.length === 0 && (
-          <div className="flex flex-col items-center justify-center text-center px-4 py-12 text-slate-400">
-            <Inbox className="h-6 w-6 stroke-[1.2] mb-2 opacity-60" />
-            <p className="text-xs font-sans">No matching thoughts found</p>
-          </div>
-        )}
-
-        {/* Render Notes */}
-        {!isLoading && filteredNotes.length > 0 && filteredNotes.map((note) => {
-          const isSelected = note.id === selectedNoteId;
-          const snippet = getCleanSnippet(note.content);
-
-          return (
-            <div
-              key={note.id}
-              onClick={() => onNoteSelect(note.id)}
-              className={`
-                group flex cursor-pointer flex-col gap-2 rounded-xl p-4 transition-all duration-300 hover:-translate-y-[1px]
-                ${
-                  isSelected
-                    ? "bg-white border border-slate-200/60 shadow-[0_4px_16px_-4px_rgba(0,0,0,0.03)]"
-                    : "border border-transparent hover:bg-slate-200/30"
-                }
-              `}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <h3
-                  className={`
-                    truncate text-xs font-medium tracking-tight font-sans transition-colors duration-200
-                    ${isSelected ? "text-slate-900 font-bold" : "text-slate-600 group-hover:text-slate-900"}
-                  `}
+            {/* Empty Space State */}
+            {!isLoading && notes.length === 0 && (
+              <motion.div
+                key="empty-state"
+                initial={{ opacity: 0, scale: 0.93, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 400, damping: 20 } }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center justify-center text-center px-4 py-12 rounded-xl border border-dashed border-slate-200/80 bg-white/40 mt-1"
+              >
+                <div className="p-2.5 bg-white rounded-lg shadow-sm border border-slate-100 mb-3 text-slate-400/80">
+                  <Sparkles className="h-4 w-4 stroke-[1.5]" />
+                </div>
+                <h4 className="text-xs font-medium text-slate-800 tracking-tight">
+                  Pristine Canvas
+                </h4>
+                <p className="text-[11px] text-slate-400 mt-1 max-w-[190px] leading-relaxed">
+                  This space has no entries. Let's record your first reflection.
+                </p>
+                <motion.button
+                  onClick={onNoteCreate}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="mt-4 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-slate-900 hover:bg-slate-800 transition-all duration-200 shadow-sm cursor-pointer"
                 >
-                  {note.title || "Untitled Draft"}
-                </h3>
-                <span className="shrink-0 text-[9px] font-bold tracking-wider text-slate-400 font-sans mt-0.5 tabular-nums">
-                  {formatDate(note.updatedAt)}
-                </span>
-              </div>
-              <p className="text-[10px] leading-relaxed text-slate-400 line-clamp-2 pointer-events-none font-sans">
-                {snippet}
-              </p>
-            </div>
-          );
-        })}
+                  <Plus className="h-3.5 w-3.5 stroke-[2]" />
+                  <span>Create note</span>
+                </motion.button>
+              </motion.div>
+            )}
+
+            {/* Search Empty State */}
+            {!isLoading && notes.length > 0 && filteredNotes.length === 0 && (
+              <motion.div
+                key="search-empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center justify-center text-center px-4 py-16 text-slate-400"
+              >
+                <Inbox className="h-5 w-5 stroke-[1.5] mb-2 opacity-50" />
+                <p className="text-xs font-medium text-slate-500">No matching thoughts found</p>
+              </motion.div>
+            )}
+
+            {/* Elastic Cascading Notes List Render */}
+            {!isLoading && filteredNotes.length > 0 && (
+              <motion.div
+                key="notes-list"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="space-y-1.5"
+              >
+                {filteredNotes.map((note) => {
+                  const isSelected = note.id === selectedNoteId;
+
+                  return (
+                    <motion.div
+                      key={note.id}
+                      variants={noteVariants}
+                      layout="position"
+                      onClick={() => onNoteSelect(note.id)}
+                      className={`
+                        group relative flex cursor-pointer flex-col gap-1.5 rounded-xl p-4 transition-all duration-300 transform-gpu
+                        hover:-translate-y-[1px] active:translate-y-0
+                        ${isSelected
+                          ? "bg-white border border-slate-200/60 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.04)]"
+                          : "border border-transparent hover:bg-slate-200/35 hover:shadow-[0_2px_8px_rgba(0,0,0,0.01)]"
+                        }
+                      `}
+                    >
+                      {/* Hyper-responsive tracking capsule background with spring momentum */}
+                      {isSelected && (
+                        <motion.div
+                          layoutId="selectedNoteActivePill"
+                          className="absolute inset-0 border border-slate-200/80 rounded-xl pointer-events-none"
+                          initial={{ borderRadius: "12px" }}
+                          transition={{ 
+                            type: "spring", 
+                            stiffness: 550,  // Fast structural tracking translation
+                            damping: 28,     // Completely clean fluid deceleration without jitter
+                            mass: 0.55       // Extremely nimble snap factor
+                          }}
+                        />
+                      )}
+
+                      <motion.div layout="position" className="flex items-center justify-between gap-3 relative z-10 w-full">
+                        <h3
+                          className={`truncate text-xs tracking-tight transition-colors duration-200 flex-1
+                            ${isSelected ? "font-semibold text-slate-900" : "font-medium text-slate-700 group-hover:text-slate-900"}
+                          `}
+                        >
+                          {note.title || "Untitled Draft"}
+                        </h3>
+                        <span className="shrink-0 text-[10px] font-medium text-slate-400 tabular-nums">
+                          {formatDate(note.updatedAt)}
+                        </span>
+                      </motion.div>
+                      
+                      <motion.p layout="position" className="text-[11px] leading-relaxed text-slate-400 line-clamp-2 pointer-events-none relative z-10 font-normal w-full">
+                        {note.cleanSnippet}
+                      </motion.p>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </LayoutGroup>
       </div>
     </div>
   );
 };
+
 export default NotesPanel;
