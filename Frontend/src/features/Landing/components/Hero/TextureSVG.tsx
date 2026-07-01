@@ -158,9 +158,7 @@ export const TextureSVG: React.FC = () => {
         >
           <main className="h-full flex items-center justify-center">
             <div className="w-full max-w-xl animate-[fadeIn_2.2s_ease-out_both]">
-              <TextureSVGContent
-                onEnterSpace={() => console.log("Grounded portal activated")}
-              />
+              <TextureSVGContent/>
             </div>
           </main>
         </div>
