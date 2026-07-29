@@ -55,7 +55,7 @@ export const Footer: React.FC = () => {
               </a>
               
               <a 
-                href="#contact" 
+                href="#contact"
                 className="hover:text-slate-900 transition-colors duration-300 ease-out relative group py-1"
               >
                 Contact
