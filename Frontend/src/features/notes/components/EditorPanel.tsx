@@ -277,7 +277,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
 
   // 2. ACTIVE CANVAS EDITOR STATE
   return (
-    <main className="relative flex min-w-0 flex-1 flex-col bg-white animate-[fadeIn_0.4s_ease-out]">
+    <main className="relative flex min-w-0 min-h-0 flex-1 flex-col overflow-hidden bg-white animate-[fadeIn_0.4s_ease-out]">
       {/* Editor Header Navigation */}
       <header className="z-10 flex h-14 shrink-0 items-center justify-between border-b border-slate-100 bg-white/80 backdrop-blur-md px-4 sm:px-8 select-none">
         <div className="flex min-w-0 items-center gap-2 text-xs text-slate-400 font-sans">
@@ -342,23 +342,22 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
       {editor && <BubbleMenus editor={editor} />}
 
       {/* Editor Canvas Writing Container */}
-      <div className="mx-auto flex-1 w-full max-w-3xl overflow-y-auto px-6 py-10 sm:px-12 md:px-16 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mx-auto flex-1 min-h-0 w-full max-w-3xl overflow-y-auto overscroll-contain px-4 py-6 sm:px-12 sm:py-10 md:px-16 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="mb-8 flex flex-col gap-3">
           <div className="flex items-center gap-2 font-mono text-[9px] font-bold uppercase tracking-widest text-slate-400">
-            <Feather className="h-3 w-3 opacity-60" /> thought_canvas //{" "}
-            {note.id ? note.id.slice(-4) : "0000"}
+            <Feather className="h-3 w-3 opacity-60" />
           </div>
 
           <input
             type="text"
             value={title}
             onChange={handleTitleChange}
-            className="w-full border-none bg-transparent p-0 font-serif text-3xl font-normal tracking-tight text-slate-900 outline-none placeholder:text-slate-200 focus:ring-0 sm:text-4xl"
+            className="w-full border-none bg-transparent p-0 font-serif text-2xl font-normal tracking-tight text-slate-900 outline-none placeholder:text-slate-200 focus:ring-0 sm:text-4xl"
             placeholder="Untitled Reflection"
           />
         </div>
 
-        <div className="relative w-full select-text prose prose-slate max-w-none">
+        <div className="relative w-full max-w-none select-text prose prose-slate">
           <EditorContent editor={editor} />
         </div>
       </div>

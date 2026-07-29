@@ -123,9 +123,9 @@ export const WorkspacePage: React.FC = () => {
 
         {/* 1. Mobile Editor View (If note selected) */}
         {selectedNoteId ? (
-          <div className="flex-1 flex flex-col h-full min-w-0">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             {/* Simple mobile header helper to return back to notes stream */}
-            <div className="bg-slate-50 border-b border-slate-100 px-4 py-2 flex items-center shrink-0">
+            <div className="flex shrink-0 items-center border-b border-slate-100 bg-slate-50 px-4 py-2">
               <button
                 onClick={() => setSelectedNoteId(null)}
                 className="flex items-center gap-1 text-xs text-slate-500 font-medium hover:text-slate-900"
@@ -146,8 +146,8 @@ export const WorkspacePage: React.FC = () => {
           </div>
         ) : (
           /* 2. Mobile Notes List View (If no note selected) */
-          <div className="flex-1 flex flex-col h-full">
-            <header className="h-14 border-b border-slate-200/60 bg-white flex items-center px-4 shrink-0 justify-between">
+          <div className="flex min-h-0 flex-1 flex-col">
+            <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-200/60 bg-white px-4">
               <button
                 onClick={() => setIsMobileSidebarOpen(true)}
                 className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl"
@@ -157,7 +157,7 @@ export const WorkspacePage: React.FC = () => {
               <span className="text-xs font-semibold text-slate-500">Reflections Stream</span>
               <div className="w-8" /> {/* Balance spacer */}
             </header>
-            <div className="flex-1 overflow-hidden">
+            <div className="min-h-0 flex-1 overflow-hidden">
               <NotesPanel
                 notes={notes}
                 selectedNoteId={selectedNoteId}
