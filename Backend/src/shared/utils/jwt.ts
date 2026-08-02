@@ -24,7 +24,7 @@ export class JwtUtils {
     }
 
     return jwt.sign(validPayload.data, JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "7y",
     });
   };
 
