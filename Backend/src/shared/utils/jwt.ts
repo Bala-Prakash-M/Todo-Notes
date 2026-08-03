@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 
-const JWT_SECRET: string = process.env.JWT_SECRET!;
+const JWT_SECRET: string = process.env.JWT_ACCESS_SECRET!;
 
 export interface AuthPayload {
   userId: string;

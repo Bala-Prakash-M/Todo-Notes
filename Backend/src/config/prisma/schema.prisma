@@ -15,9 +15,26 @@ model User {
 
   todos       Todo[]
   notebooks   Notebook[]
-  
+  refreshTokens RefreshToken[]
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt  
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+
+  tokenHash String   @unique
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  expiresAt  DateTime
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Todo {
@@ -26,18 +43,18 @@ model Todo {
   completed   Boolean   @default(false)
 
   userId      String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 
 model Notebook {
-  id          String      @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
 
   userId      String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   notes       Note[]
 
