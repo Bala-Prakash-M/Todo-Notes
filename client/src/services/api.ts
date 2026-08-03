@@ -51,8 +51,12 @@ export const registerOnUnauthenticated = (callback: () => void) => {
 // Request Interceptor
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    if (_accessToken && !config.headers.Authorization) {
-      config.headers.Authorization = `Bearer ${_accessToken}`;
+    if (_accessToken) {
+      if (typeof config.headers.set === "function") {
+        config.headers.set("Authorization", `Bearer ${_accessToken}`);
+      } else {
+        config.headers["Authorization"] = `Bearer ${_accessToken}`;
+      }
     }
     return config;
   },
@@ -65,8 +69,14 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    // Prevent infinite loop if the 401 occurred on the refresh token endpoint itself, or if originalRequest is missing
-    if (!originalRequest || originalRequest.url?.includes("/auth/refresh")) {
+    // Prevent token refresh logic if the 401 occurred on auth routes: login, register, refresh, logout
+    if (
+      !originalRequest ||
+      originalRequest.url?.includes("/auth/refresh") ||
+      originalRequest.url?.includes("/auth/login") ||
+      originalRequest.url?.includes("/auth/register") ||
+      originalRequest.url?.includes("/auth/logout")
+    ) {
       return Promise.reject(error);
     }
 
@@ -75,7 +85,11 @@ api.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({
             resolve: (token: string) => {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
+              if (typeof originalRequest.headers.set === "function") {
+                originalRequest.headers.set("Authorization", `Bearer ${token}`);
+              } else {
+                originalRequest.headers["Authorization"] = `Bearer ${token}`;
+              }
               resolve(api(originalRequest));
             },
             reject: (err: any) => {
@@ -94,7 +108,12 @@ api.interceptors.response.use(
         const newAccessToken = response.data.accessToken;
 
         setAccessToken(newAccessToken);
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        
+        if (typeof originalRequest.headers.set === "function") {
+          originalRequest.headers.set("Authorization", `Bearer ${newAccessToken}`);
+        } else {
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        }
 
         processQueue(null, newAccessToken);
         isRefreshing = false;
