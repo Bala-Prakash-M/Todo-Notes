@@ -15,6 +15,20 @@ export class UserRepository {
     }
   };
 
+  findById = async (id: string) => {
+    return prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    });
+  };
+
   createUser = async (user: RegisterDto) => {
     try {
       const newUser = await prisma.user.create({

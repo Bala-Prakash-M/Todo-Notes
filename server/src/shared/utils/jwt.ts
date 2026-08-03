@@ -8,12 +8,22 @@ const ACCESS_TOKEN_EXPIRES_IN = (process.env.ACCESS_TOKEN_EXPIRES_IN) as StringV
 
 const REFRESH_TOKEN_EXPIRES_IN = (process.env.REFRESH_TOKEN_EXPIRES_IN) as StringValue;
 
-export interface AuthPayload {
+export interface AccessTokenPayload {
   userId: string;
 }
 
-export const AuthPayLoadSchema = z.object({
+export interface RefreshTokenPayload {
+  userId: string;
+  sessionId: string;
+}
+
+export const AccessTokenPayloadSchema = z.object({
   userId: z.string(),
+});
+
+export const RefreshTokenPayloadSchema = z.object({
+  userId: z.string(),
+  sessionId: z.string(),
 });
 
 if (!JWT_ACCESS_SECRET) {
@@ -38,7 +48,7 @@ export class JwtUtils {
     secret: string,
     expiresIn: StringValue,
   ): string {
-    const validPayload = AuthPayLoadSchema.safeParse(payload);
+    const validPayload = AccessTokenPayloadSchema.safeParse(payload);
 
     if (!validPayload.success) {
       throw new Error("Invalid token payload");
@@ -49,10 +59,10 @@ export class JwtUtils {
     });
   }
 
-  private verify(token: string, secret: string): AuthPayload {
+  private verify(token: string, secret: string): RefreshTokenPayload {
     const decoded = jwt.verify(token, secret);
 
-    const payload = AuthPayLoadSchema.safeParse(decoded);
+    const payload = RefreshTokenPayloadSchema.safeParse(decoded);
 
     if (!payload.success) {
       throw new Error("Invalid token payload");
@@ -61,19 +71,19 @@ export class JwtUtils {
     return payload.data;
   }
 
-  generateAccessToken(payload: AuthPayload): string {
+  generateAccessToken(payload: AccessTokenPayload): string {
     return this.generate(payload, JWT_ACCESS_SECRET, ACCESS_TOKEN_EXPIRES_IN);
   }
 
-  generateRefreshToken(payload: AuthPayload): string {
+  generateRefreshToken(payload: RefreshTokenPayload): string {
     return this.generate(payload, JWT_REFRESH_SECRET, REFRESH_TOKEN_EXPIRES_IN);
   }
 
-  verifyAccessToken(token: string): AuthPayload {
+  verifyAccessToken(token: string): AccessTokenPayload {
     return this.verify(token, JWT_ACCESS_SECRET);
   }
 
-  verifyRefreshToken(token: string): AuthPayload {
+  verifyRefreshToken(token: string): RefreshTokenPayload {
     return this.verify(token, JWT_REFRESH_SECRET);
   }
 }
