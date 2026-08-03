@@ -18,7 +18,7 @@ export function AppRouter() {
 
       {/* App routes using standard browser scrolling */}
       <Route path="/auth" element={<AuthPage />} />
-      
+
       <Route
         path="/tasks"
         element={
