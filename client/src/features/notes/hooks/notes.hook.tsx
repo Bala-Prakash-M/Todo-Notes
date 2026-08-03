@@ -8,11 +8,10 @@ const useNotes = () => {
   const [isNotesLoading, setIsNotesLoading] = useState(false);
   const [notesError, setNotesError] = useState<string | null>();
 
-  const token = localStorage.getItem("token");
   const { notebookId } = useParams<{ notebookId: string }>();
 
   useEffect(() => {
-    if (!token || !notebookId) {
+    if (!notebookId) {
       const timer = setTimeout(() => {
         setNotes([]);
       }, 0);
@@ -24,8 +23,7 @@ const useNotes = () => {
         setIsNotesLoading(true);
         setNotesError(null);
 
-        const notes = await notesAPI.getAllNotes(token, notebookId);
-
+        const notes = await notesAPI.getAllNotes(notebookId);
         setNotes(notes);
       } catch (error) {
         if (error instanceof Error) {
@@ -39,15 +37,15 @@ const useNotes = () => {
     };
 
     fetchAllNotes();
-  }, [notebookId, token]);
+  }, [notebookId]);
 
   const createNote = async (title: string, content: string): Promise<Note> => {
-    if (!token || !notebookId) {
-      throw new Error("Missing authentication token or active notebook selection");
+    if (!notebookId) {
+      throw new Error("Missing active notebook selection");
     }
     setIsNotesLoading(true);
     try {
-      const newNote = await notesAPI.createNote(token, notebookId, title, content);
+      const newNote = await notesAPI.createNote(notebookId, title, content);
       setNotes((prev) => [newNote, ...prev]);
       return newNote;
     } catch (error) {
@@ -60,11 +58,11 @@ const useNotes = () => {
   };
 
   const updateNote = async (id: string, title: string, content: string): Promise<Note> => {
-    if (!token || !notebookId) {
-      throw new Error("Missing authentication token or active notebook selection");
+    if (!notebookId) {
+      throw new Error("Missing active notebook selection");
     }
     try {
-      const updatedNote = await notesAPI.updateNote(token, notebookId, id, title, content);
+      const updatedNote = await notesAPI.updateNote(notebookId, id, title, content);
       setNotes((prev) =>
         prev.map((n) => (n.id === id ? updatedNote : n))
       );
@@ -77,12 +75,12 @@ const useNotes = () => {
   };
 
   const deleteNote = async (id: string): Promise<void> => {
-    if (!token || !notebookId) {
-      throw new Error("Missing authentication token or active notebook selection");
+    if (!notebookId) {
+      throw new Error("Missing active notebook selection");
     }
     setIsNotesLoading(true);
     try {
-      await notesAPI.deleteNote(token, notebookId, id);
+      await notesAPI.deleteNote(notebookId, id);
       setNotes((prev) => prev.filter((n) => n.id !== id));
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : "Failed to delete note";

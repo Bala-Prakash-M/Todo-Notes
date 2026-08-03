@@ -16,6 +16,7 @@ import type { Variants } from "framer-motion";
 import useNotebook from "../../notebooks/hooks/notebook.hook";
 import { CreateNotebookModal } from "../../notebooks/components/CreateNotebookPopup";
 import useScreenSize from "../../../shared/hooks/useScreenSize";
+import { useAuthContext } from "../../../app/providers/AuthContext";
 
 interface NotebookSidebarProps {
   onToggleCollapse?: () => void;
@@ -63,8 +64,9 @@ export const NotebookSidebar: React.FC<NotebookSidebarProps> = ({
   const navigate = useNavigate();
   const { notebookId } = useParams<{ notebookId: string }>();
   const { isMobile } = useScreenSize();
-  const userName = localStorage.getItem("userName") || "Anastasia";
-  const email = localStorage.getItem("email") || "anastasia@icylab.co";
+  const { user } = useAuthContext();
+  const userName = user?.name || "Anastasia";
+  const email = user?.email || "anastasia@icylab.co";
 
   const {
     notebooks,

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../app/providers/AuthContext";
 
 interface SearchItem {
   id: string;
@@ -21,12 +22,7 @@ export const ControlHub: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // FIX: Isolated single lazy initializer to read token without continuous disk thrashing
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
-  const [userName, setUserName] = useState(() =>
-    localStorage.getItem("userName"),
-  );
+  const { user, logout } = useAuthContext();
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -158,14 +154,14 @@ export const ControlHub: React.FC = () => {
           }`}
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
-          {token && userName ? (
+          {user ? (
             <>
               <div className="flex flex-col space-y-0.5 pb-3 border-b border-slate-300/40">
                 <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase">
                   Active Profile
                 </span>
                 <span className="text-sm font-medium text-slate-800 tracking-wide">
-                  {userName}
+                  {user.name}
                 </span>
               </div>
 
@@ -188,12 +184,8 @@ export const ControlHub: React.FC = () => {
               <div className="pt-3 border-t border-slate-300/40">
                 <button
                   type="button"
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("userName");
-                    localStorage.removeItem("email");
-                    setToken(null);
-                    setUserName(null);
+                  onClick={async () => {
+                    await logout();
                     setIsMenuOpen(false);
                   }}
                   className="w-full text-left font-mono text-[10px] tracking-[0.2em] text-slate-400 hover:text-rose-600 uppercase transition-colors duration-300 focus:outline-none"
@@ -226,9 +218,6 @@ export const ControlHub: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  // Testing helper route state toggle
-                  localStorage.setItem("token", "mock-auth-payload");
-                  setToken("mock-auth-payload");
                   setIsMenuOpen(false);
                   navigate("/auth");
                 }}

@@ -10,13 +10,11 @@ export const useTodos = () => {
   const [loading, setLoading] = useState(true);
   const [mutating, setMutating] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        if (!token) return;
-        const response = await todosAPI.getAll(token);
+        const response = await todosAPI.getAll();
         setTodos(response.todos);
       } catch (error: unknown) {
         console.error(error);
@@ -26,7 +24,7 @@ export const useTodos = () => {
     };
 
     fetchTodos();
-  }, [token, setTodos]);
+  }, [setTodos]);
 
   const handleToggleComplete = useCallback(
     async (todo: Todo) => {
@@ -34,7 +32,7 @@ export const useTodos = () => {
 
       setMutating(true);
       try {
-        const updatedTodo = await todosAPI.updateTodo(token!, todo.id, {
+        const updatedTodo = await todosAPI.updateTodo(todo.id, {
           title: todo.title,
           completed: !todo.completed,
         });
@@ -55,7 +53,7 @@ export const useTodos = () => {
         setMutating(false);
       }
     },
-    [token, mutating, setTodos],
+    [mutating, setTodos],
   );
 
   const handleDeleteTask = useCallback(
@@ -63,16 +61,14 @@ export const useTodos = () => {
       if (mutating) return;      
       setMutating(true);
       try {
-        await todosAPI.deleteTodo(token!, id);
+        await todosAPI.deleteTodo(id);
         setTodos((prev) => prev.filter((t) => t.id !== id));
       } catch (error) {
         console.error("Delete failed, re-fetching:", error);
         // On failure, re-fetch to restore the correct state
         try {
-          if (token) {
-            const response = await todosAPI.getAll(token);
-            setTodos(response.todos);
-          }
+          const response = await todosAPI.getAll();
+          setTodos(response.todos);
         } catch (fetchError) {
           console.error(fetchError);
         }
@@ -80,39 +76,31 @@ export const useTodos = () => {
         setMutating(false);
       }
     },
-    [token, mutating, setTodos],
+    [mutating, setTodos],
   );
 
   const handleCreateTodo = useCallback(
     async (title: string) => {
-
       if (mutating) return;
-
       setMutating(true);
 
       try {
-
-        const newTodo = await todosAPI.createTodo(token!, title);
-
+        const newTodo = await todosAPI.createTodo(title);
         setTodos(prev => [...prev, newTodo]);
-
       } catch (error) {
-        console.error("Delete failed, re-fetching:", error);
+        console.error("Create failed, re-fetching:", error);
         // On failure, re-fetch to restore the correct state
         try {
-          if (token) {
-            const response = await todosAPI.getAll(token);
-            setTodos(response.todos);
-          }
+          const response = await todosAPI.getAll();
+          setTodos(response.todos);
         } catch (fetchError) {
           console.error(fetchError);
         }
       } finally {
         setMutating(false);
       }
-
     },
-    [token, mutating, setTodos]
+    [mutating, setTodos]
   )
 
   const formatDetailedTimestamp = (isoString: string) => {

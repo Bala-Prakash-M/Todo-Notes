@@ -167,4 +167,15 @@ export class AuthService {
 
     return user;
   }
+
+  async logout(refreshToken: string) {
+    try {
+      const payload = this.JwtUtils.verifyRefreshToken(refreshToken);
+      await this.RefreshTokenRepository.delete(payload.sessionId);
+    } catch {
+      // Ignore token verification errors during logout
+    }
+  }
 }
+
+

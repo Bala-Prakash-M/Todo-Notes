@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import useScreenSize from "../../../shared/hooks/useScreenSize";
+import { useAuthContext } from "../../../app/providers/AuthContext";
 
 type SidebarProps = {
   currentView: string;
@@ -25,8 +26,9 @@ const Sidebar = ({
   isMobileSidebarOpen,
   setIsMobileSidebarOpen,
 }: SidebarProps) => {
-  const userName = localStorage.getItem("userName") || "Anastasia";
-  const email = localStorage.getItem("email") || "anastasia@icylab.co";
+  const { user } = useAuthContext();
+  const userName = user?.name || "Anastasia";
+  const email = user?.email || "anastasia@icylab.co";
   const { isMobile, isDesktop, isPad } = useScreenSize();
 
   return (

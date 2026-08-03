@@ -73,15 +73,11 @@ const useNotebook = () => {
   const [notebookError, setNotebookError] = useState<string | null>(null);
   const [isNotebookLoading, setIsNotebookLoading] = useState(false);
 
-  const token = localStorage.getItem("token");
-
-  
   useEffect(() => {
     const getAllNotebooks = async (): Promise<void> => {
       try {
         setIsNotebookLoading(true);
-  
-        const response = await notebookAPI.getAllNotebooks(token!);
+        const response = await notebookAPI.getAllNotebooks();
         setNotebooks(response);
       } catch (error) {
         if (error instanceof Error) {
@@ -95,15 +91,14 @@ const useNotebook = () => {
     };
 
     getAllNotebooks();
-
-  }, [token])
+  }, []);
 
   const createNotebook = async (name: string): Promise<void> => {
     setIsNotebookLoading(true);
     setNotebookError(null);
 
     try {
-      const response = await notebookAPI.createNotebook(token!, name);
+      const response = await notebookAPI.createNotebook(name);
 
       const newNotebook = {
         ...response,
@@ -126,7 +121,7 @@ const useNotebook = () => {
     setNotebookError(null);
 
     try {
-      const response = await notebookAPI.updateNotebook(token!, id, name);
+      const response = await notebookAPI.updateNotebook(id, name);
       setNotebooks((prev) =>
         prev.map((nb) => (nb.id === id ? { ...nb, name: response.name } : nb))
       );
@@ -147,7 +142,7 @@ const useNotebook = () => {
     setNotebookError(null);
 
     try {
-      await notebookAPI.deleteNotebook(token!, id);
+      await notebookAPI.deleteNotebook(id);
       setNotebooks((prev) => prev.filter((nb) => nb.id !== id));
     } catch (error) {
       if (error instanceof Error) {
@@ -162,28 +157,28 @@ const useNotebook = () => {
   };
 
   const getNotebookStyles = (id: string) => {
-  if (!id) return { theme: NOTEBOOK_THEMES[0], shape: NOTEBOOK_SHAPES[0].path };
+    if (!id) return { theme: NOTEBOOK_THEMES[0], shape: NOTEBOOK_SHAPES[0].path };
 
-  let hashA = 0;
-  let hashB = 0;
+    let hashA = 0;
+    let hashB = 0;
 
-  for (let i = 0; i < id.length; i++) {
-    const char = id.charCodeAt(i);
-    // Standard hash multiplier for colors
-    hashA = char + ((hashA << 5) - hashA);
-    // Alternative bitwise shift multiplier for shapes to ensure variance
-    hashB = char + ((hashB << 7) - hashB) + i;
-  }
+    for (let i = 0; i < id.length; i++) {
+      const char = id.charCodeAt(i);
+      // Standard hash multiplier for colors
+      hashA = char + ((hashA << 5) - hashA);
+      // Alternative bitwise shift multiplier for shapes to ensure variance
+      hashB = char + ((hashB << 7) - hashB) + i;
+    }
 
-  const themeIndex = Math.abs(hashA) % NOTEBOOK_THEMES.length;
-  // Modulo against the separate shape array size
-  const shapeIndex = Math.abs(hashB) % NOTEBOOK_SHAPES.length;
+    const themeIndex = Math.abs(hashA) % NOTEBOOK_THEMES.length;
+    // Modulo against the separate shape array size
+    const shapeIndex = Math.abs(hashB) % NOTEBOOK_SHAPES.length;
 
-  return {
-    theme: NOTEBOOK_THEMES[themeIndex],
-    shape: NOTEBOOK_SHAPES[shapeIndex].path,
+    return {
+      theme: NOTEBOOK_THEMES[themeIndex],
+      shape: NOTEBOOK_SHAPES[shapeIndex].path,
+    };
   };
-};
 
   return {
     notebooks,
@@ -195,4 +190,5 @@ const useNotebook = () => {
     getNotebookStyles,
   };
 };
+
 export default useNotebook;

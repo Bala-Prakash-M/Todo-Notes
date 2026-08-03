@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../api/auth.api";
+import { useAuthContext } from "../../../app/providers/AuthContext";
 
 export const useAuth = () => {
   const navigate = useNavigate();
+  const { login: contextLogin, register: contextRegister } = useAuthContext();
   const [loginError, setLoginError] = useState("");
   const [loginIsSubmitting, setLoginIsSubmitting] = useState(false);
   const [registerError, setRegisterError] = useState("");
@@ -18,16 +19,11 @@ export const useAuth = () => {
     setLoginError("");
     setLoginIsSubmitting(true);
 
-    const apiCall = authApi.login({ email, password });
+    const apiCall = contextLogin(email, password);
     const delay = new Promise((resolve) => setTimeout(resolve, 2000));
 
     try {
-      const [response] = await Promise.all([apiCall, delay]);
-
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("userName", response.user.name);
-      localStorage.setItem("email", response.user.email);
-
+      await Promise.all([apiCall, delay]);
       navigate("/notebooks");
     } catch (error) {
       if (error instanceof Error) {
@@ -50,16 +46,11 @@ export const useAuth = () => {
     setRegisterError("");
     setRegisterIsSubmitting(true);
 
-    const apiCall = authApi.register({ name, email, password });
+    const apiCall = contextRegister(name, email, password);
     const delay = new Promise((resolve) => setTimeout(resolve, 2000));
 
     try {
-      const [response] = await Promise.all([apiCall, delay]);
-
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("userName", response.user.name);
-      localStorage.setItem("email", response.user.email);
-
+      await Promise.all([apiCall, delay]);
       navigate("/notebooks");
     } catch (error) {
       if (error instanceof Error) {
