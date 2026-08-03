@@ -106,4 +106,46 @@ export class AuthService {
       throw new AppError(401, (error as Error).message);
     }
   }
+
+  async refresh(refreshToken: string) {
+  // Verify the refresh token JWT
+  const payload = this.JwtUtils.verifyRefreshToken(refreshToken);
+
+  // Find the stored refresh token for this user
+  const storedToken =
+    await this.RefreshTokenRepository.findByUserId(
+      payload.userId
+    );
+
+  if (!storedToken) {
+    throw new AppError(401, "Refresh token not found");
+  }
+
+  // Check if the stored token has expired
+  if (new Date() > storedToken.expiresAt) {
+    await this.RefreshTokenRepository.delete(storedToken.id);
+
+    throw new AppError(401, "Refresh token expired");
+  }
+
+  // Compare the incoming refresh token with the stored hash
+  const valid = await comparePasswords(
+    refreshToken,
+    storedToken.tokenHash
+  );
+
+  if (!valid) {
+    throw new AppError(401, "Invalid refresh token");
+  }
+
+  // Generate a new access token
+  const accessToken =
+    this.JwtUtils.generateAccessToken({
+      userId: payload.userId,
+    });
+
+  return {
+    accessToken,
+  };
+}
 }

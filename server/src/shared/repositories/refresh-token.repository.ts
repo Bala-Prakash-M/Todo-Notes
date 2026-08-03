@@ -2,32 +2,45 @@ import { prisma } from "../../lib/prisma.js";
 
 export class RefreshTokenRepository {
 
-  create = async (userId: string, tokenHash: string, expiresAt: Date) => {
+  create = async (
+    userId: string,
+    sessionId: string,
+    tokenHash: string,
+    expiresAt: Date
+  ) => {
     return prisma.refreshToken.create({
       data: {
         userId,
+        sessionId,
         tokenHash,
         expiresAt,
       },
     });
   };
-  findByTokenHash = async (tokenHash: string) => {
+
+  findBySessionId = async (
+    sessionId: string
+  ) => {
     return prisma.refreshToken.findUnique({
       where: {
-        tokenHash,
+        sessionId,
       },
     });
   };
 
-  delete = async (tokenHash: string) => {
+  delete = async (
+    sessionId: string
+  ) => {
     return prisma.refreshToken.delete({
       where: {
-        tokenHash,
+        sessionId,
       },
     });
   };
 
-  deleteAllByUser = async (userId: string) => {
+  deleteAllByUser = async (
+    userId: string
+  ) => {
     return prisma.refreshToken.deleteMany({
       where: {
         userId,
