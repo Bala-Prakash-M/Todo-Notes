@@ -12,6 +12,7 @@ import { AuthMiddleware } from "./src/middlewares/auth.middleware.js";
 const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://notebook-bp.vercel.app/",
   "https://todo-notes-eta.vercel.app/",
 ];
 
