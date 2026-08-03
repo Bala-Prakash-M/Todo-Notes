@@ -6,6 +6,7 @@ export class AuthMiddleware {
 
   authenticate = (req: Request, res: Response, next: NextFunction): void => {
     try {
+      console.log("hi");
       const authHeader = req.headers["authorization"];
       // TypeScript complains because a string[] might be returned, and string[] is not assignable to string.
       if (typeof authHeader !== "string") {
@@ -28,6 +29,8 @@ export class AuthMiddleware {
       const payload = this.JwtUtils.verifyAccessToken(token);
 
       req.user = payload;
+
+      console.log("hihi");
 
       next();
     } catch (error: unknown) {

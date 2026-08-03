@@ -4,9 +4,11 @@ import type { StringValue } from "ms";
 
 const JWT_ACCESS_SECRET: string = process.env.JWT_ACCESS_SECRET!;
 const JWT_REFRESH_SECRET: string = process.env.JWT_REFRESH_SECRET!;
-const ACCESS_TOKEN_EXPIRES_IN = (process.env.ACCESS_TOKEN_EXPIRES_IN) as StringValue;
+const ACCESS_TOKEN_EXPIRES_IN = process.env
+  .ACCESS_TOKEN_EXPIRES_IN as StringValue;
 
-const REFRESH_TOKEN_EXPIRES_IN = (process.env.REFRESH_TOKEN_EXPIRES_IN) as StringValue;
+const REFRESH_TOKEN_EXPIRES_IN = process.env
+  .REFRESH_TOKEN_EXPIRES_IN as StringValue;
 
 export interface AccessTokenPayload {
   userId: string;
@@ -43,26 +45,31 @@ if (!REFRESH_TOKEN_EXPIRES_IN) {
 }
 
 export class JwtUtils {
-  private generate(
-    payload: unknown,
+  private generate<T extends object>(
+    payload: T,
     secret: string,
     expiresIn: StringValue,
+    schema: z.ZodType<T>,
   ): string {
-    const validPayload = AccessTokenPayloadSchema.safeParse(payload);
+    const validPayload = schema.safeParse(payload);
 
     if (!validPayload.success) {
       throw new Error("Invalid token payload");
     }
 
     return jwt.sign(validPayload.data, secret, {
-      expiresIn: expiresIn,
+      expiresIn,
     });
   }
 
-  private verify(token: string, secret: string): RefreshTokenPayload {
+  private verify<T extends object>(
+    token: string,
+    secret: string,
+    schema: z.ZodType<T>,
+  ): T {
     const decoded = jwt.verify(token, secret);
 
-    const payload = RefreshTokenPayloadSchema.safeParse(decoded);
+    const payload = schema.safeParse(decoded);
 
     if (!payload.success) {
       throw new Error("Invalid token payload");
@@ -72,18 +79,28 @@ export class JwtUtils {
   }
 
   generateAccessToken(payload: AccessTokenPayload): string {
-    return this.generate(payload, JWT_ACCESS_SECRET, ACCESS_TOKEN_EXPIRES_IN);
+    return this.generate(
+      payload,
+      JWT_ACCESS_SECRET,
+      ACCESS_TOKEN_EXPIRES_IN,
+      AccessTokenPayloadSchema,
+    );
   }
 
   generateRefreshToken(payload: RefreshTokenPayload): string {
-    return this.generate(payload, JWT_REFRESH_SECRET, REFRESH_TOKEN_EXPIRES_IN);
+    return this.generate(
+      payload,
+      JWT_REFRESH_SECRET,
+      REFRESH_TOKEN_EXPIRES_IN,
+      RefreshTokenPayloadSchema,
+    );
   }
 
   verifyAccessToken(token: string): AccessTokenPayload {
-    return this.verify(token, JWT_ACCESS_SECRET);
+    return this.verify(token, JWT_ACCESS_SECRET, AccessTokenPayloadSchema);
   }
 
   verifyRefreshToken(token: string): RefreshTokenPayload {
-    return this.verify(token, JWT_REFRESH_SECRET);
+    return this.verify(token, JWT_REFRESH_SECRET, RefreshTokenPayloadSchema);
   }
 }
