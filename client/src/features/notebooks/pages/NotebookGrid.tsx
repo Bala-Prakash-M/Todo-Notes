@@ -33,9 +33,19 @@ export const NotebookDashboard: React.FC = () => {
     "notebooks",
   );
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (scrollContainerRef.current && !scrollContainerRef.current.contains(e.target as Node)) {
+      scrollContainerRef.current.scrollTop += e.deltaY;
+    }
+  };
 
   return (
-    <div className="flex w-full h-screen bg-[#F8FAFC] text-slate-800 antialiased font-sans overflow-hidden select-none relative">
+    <div
+      onWheel={handleWheel}
+      className="flex w-full h-screen bg-[#F8FAFC] text-slate-800 antialiased font-sans overflow-hidden select-none relative"
+    >
       {/* 1. LEFT SIDEBAR COMPONENT (Hidden on Mobile, Visible on MD up) */}
       <Sidebar
         setCurrentView={setCurrentView}
@@ -82,9 +92,13 @@ export const NotebookDashboard: React.FC = () => {
         </header>
 
         {/* INDEPENDENT SCROLLING CENTER CANVAS PANEL */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto h-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {/* VIEW CONDITION 1: NOTEBOOKS RENDER */}
-          {currentView === "notebooks" && (
+        <div
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto h-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden flex flex-col justify-between"
+        >
+          <div className="flex-grow">
+            {/* VIEW CONDITION 1: NOTEBOOKS RENDER */}
+            {currentView === "notebooks" && (
             <div className="animate-[fadeIn_0.3s_ease-out]">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 border-b border-slate-100 pb-5">
                 <div className="space-y-0.5">
@@ -267,11 +281,11 @@ export const NotebookDashboard: React.FC = () => {
                                     onClick={(e) => e.stopPropagation()} // Keeps menu active on inner clicks
                                   >
                                     <style>{`
-                @keyframes dropdownSnap {
-                  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
-                  to { opacity: 1; transform: scale(1) translateY(0); }
-                }
-              `}</style>
+                                      @keyframes dropdownSnap {
+                                        from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+                                        to { opacity: 1; transform: scale(1) translateY(0); }
+                                      }
+                                    `}</style>
 
                                     <button
                                       type="button"
@@ -393,8 +407,21 @@ export const NotebookDashboard: React.FC = () => {
             </div>
           )}
 
-          {/* VIEW CONDITION 2: TASKS LEDGER RENDER */}
           {currentView === "tasks" && <TasksPage />}
+          </div>
+
+          {/* Premium Minimalist Footer */}
+          <footer className="mt-16 pt-8 border-t border-slate-200/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] sm:text-[11px] font-sans font-medium text-slate-400 select-none">
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="tracking-wide">System active & secure</span>
+            </div>
+            <div className="flex items-center gap-1.5 tracking-wider font-mono uppercase text-[9px] sm:text-[10px]">
+              <span>Notebook Core v1.0.0</span>
+              <span className="text-slate-300 font-sans">•</span>
+              <span>Reflections Engine</span>
+            </div>
+          </footer>
         </div>
       </main>
       {isCreateNotebookPopupOpen && (

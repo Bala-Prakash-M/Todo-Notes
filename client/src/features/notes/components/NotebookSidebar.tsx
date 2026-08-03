@@ -84,6 +84,13 @@ export const NotebookSidebar: React.FC<NotebookSidebarProps> = ({
   );
   const [editName, setEditName] = useState("");
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (listRef.current && !listRef.current.contains(e.target as Node)) {
+      listRef.current.scrollTop += e.deltaY;
+    }
+  };
 
   // Close context menu on click outside
   useEffect(() => {
@@ -143,6 +150,7 @@ export const NotebookSidebar: React.FC<NotebookSidebarProps> = ({
           borderRightWidth: isCollapsed ? 0 : 1,
         }}
         transition={sidebarSpringPhysics}
+        onWheel={handleWheel}
         className="relative border-r border-slate-200/60 bg-slate-50/50 flex flex-col justify-between shrink-0 h-full select-none overflow-hidden antialiased"
       >
         {/* Dynamic Background Glow */}
@@ -238,7 +246,10 @@ export const NotebookSidebar: React.FC<NotebookSidebarProps> = ({
           </div>
 
           {/* Scrolling Notebook List */}
-          <div className="flex-1 overflow-y-auto px-2 pb-4 space-y-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div
+            ref={listRef}
+            className="flex-1 overflow-y-auto px-2 pb-4 space-y-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
             <AnimatePresence mode="popLayout">
               {isNotebookLoading && notebooks.length === 0 && (
                 <motion.div

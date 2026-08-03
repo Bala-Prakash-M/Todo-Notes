@@ -41,7 +41,6 @@ const formatDate = (dateString: string) => {
   }
 };
 
-
 // Ultra-bouncy fluid cascade configurations
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -61,10 +60,10 @@ const noteVariants: Variants = {
     y: 0,
     scale: 1,
     transition: { 
-      type: "spring", // Safely inferred as spring literal union type
-      stiffness: 480,  // High energy snappy launch
-      damping: 22,     // Smooth settling control
-      mass: 0.55       // Lightweight fluid motion
+      type: "spring",
+      stiffness: 480,
+      damping: 22,
+      mass: 0.55
     },
   },
   exit: { 
@@ -85,6 +84,13 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({
   onToggleSidebar,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const listRef = React.useRef<HTMLDivElement | null>(null);
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (listRef.current && !listRef.current.contains(e.target as Node)) {
+      listRef.current.scrollTop += e.deltaY;
+    }
+  };
 
   const processedNotes = useMemo(() => {
     return notes.map((note) => ({
@@ -105,7 +111,10 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({
   }, [processedNotes, searchQuery]);
 
   return (
-    <div className="w-80 border-r border-slate-200/60 bg-slate-50/50 flex flex-col h-full shrink-0 select-none antialiased">
+    <div 
+      onWheel={handleWheel}
+      className="w-80 border-r border-slate-200/60 bg-slate-50/50 flex flex-col h-full shrink-0 select-none antialiased"
+    >
       {/* Header Info & Premium Action Button Layout */}
       <div className="px-5 pt-6 pb-4 shrink-0 flex flex-col gap-3.5">
         <div className="flex items-center justify-between gap-3">
@@ -195,7 +204,10 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div 
+        ref={listRef}
+        className="flex-1 min-h-0 overflow-y-auto p-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
         <LayoutGroup id="notes-panel-group">
           <AnimatePresence mode="popLayout">
             {/* Elegant Skeleton State */}
@@ -299,9 +311,9 @@ export const NotesPanel: React.FC<NotesPanelProps> = ({
                           initial={{ borderRadius: "12px" }}
                           transition={{ 
                             type: "spring", 
-                            stiffness: 550,  // Fast structural tracking translation
-                            damping: 28,     // Completely clean fluid deceleration without jitter
-                            mass: 0.55       // Extremely nimble snap factor
+                            stiffness: 550,
+                            damping: 28,
+                            mass: 0.55
                           }}
                         />
                       )}
