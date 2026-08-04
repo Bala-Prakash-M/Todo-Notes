@@ -9,7 +9,17 @@ export const api = axios.create({
   },
 });
 
-let _accessToken: string | null = null;
+const ACCESS_TOKEN_STORAGE_KEY = "accessToken";
+
+const readStoredAccessToken = () => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+};
+
+let _accessToken: string | null = readStoredAccessToken();
 let _onUnauthenticated: (() => void) | null = null;
 let _onTokenChange: ((token: string | null) => void) | null = null;
 let isRefreshing = false;
@@ -31,6 +41,15 @@ const processQueue = (error: any, token: string | null = null) => {
 
 export const setAccessToken = (token: string | null) => {
   _accessToken = token;
+
+  if (typeof window !== "undefined") {
+    if (token) {
+      window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+    } else {
+      window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+    }
+  }
+
   if (_onTokenChange) {
     _onTokenChange(token);
   }
@@ -46,6 +65,37 @@ export const registerOnTokenChange = (callback: (token: string | null) => void) 
 
 export const registerOnUnauthenticated = (callback: () => void) => {
   _onUnauthenticated = callback;
+};
+
+export const refreshAccessToken = async () => {
+  if (isRefreshing) {
+    return new Promise<string>((resolve, reject) => {
+      failedQueue.push({ resolve, reject });
+    });
+  }
+
+  isRefreshing = true;
+
+  try {
+    const response = await api.post<{ accessToken: string }>("/auth/refresh");
+    const newAccessToken = response.data.accessToken;
+
+    setAccessToken(newAccessToken);
+    processQueue(null, newAccessToken);
+
+    return newAccessToken;
+  } catch (refreshError) {
+    processQueue(refreshError, null);
+    setAccessToken(null);
+
+    if (_onUnauthenticated) {
+      _onUnauthenticated();
+    }
+
+    throw refreshError;
+  } finally {
+    isRefreshing = false;
+  }
 };
 
 // Request Interceptor
@@ -100,35 +150,18 @@ api.interceptors.response.use(
       }
 
       originalRequest._retry = true;
-      isRefreshing = true;
 
       try {
-        // Send request to /auth/refresh
-        const response = await api.post<{ accessToken: string }>("/auth/refresh");
-        const newAccessToken = response.data.accessToken;
+        const newAccessToken = await refreshAccessToken();
 
-        setAccessToken(newAccessToken);
-        
         if (typeof originalRequest.headers.set === "function") {
           originalRequest.headers.set("Authorization", `Bearer ${newAccessToken}`);
         } else {
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         }
 
-        processQueue(null, newAccessToken);
-        isRefreshing = false;
-
         return api(originalRequest);
       } catch (refreshError) {
-        processQueue(refreshError, null);
-        isRefreshing = false;
-
-        // Clear tokens and trigger logout
-        setAccessToken(null);
-        if (_onUnauthenticated) {
-          _onUnauthenticated();
-        }
-
         return Promise.reject(refreshError);
       }
     }

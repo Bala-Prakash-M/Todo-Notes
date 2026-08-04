@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "../../features/auth/api/auth.api";
 import type { User } from "../../features/auth/types/auth.types";
 import {
+  getAccessToken,
+  refreshAccessToken,
   setAccessToken as apiSetAccessToken,
   registerOnTokenChange,
   registerOnUnauthenticated,
@@ -21,19 +23,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [accessToken, setAccessTokenState] = useState<string | null>(null);
+  const [accessToken, setAccessTokenState] = useState<string | null>(() => getAccessToken());
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const isInitializingRef = useRef(true);
 
-  const handleClientLogout = useCallback(() => {
+  const clearClientAuth = useCallback(() => {
     setUser(null);
     setAccessTokenState(null);
     apiSetAccessToken(null);
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userName");
     localStorage.removeItem("email");
+  }, []);
+
+  const handleClientLogout = useCallback(() => {
+    clearClientAuth();
     navigate("/auth");
-  }, [navigate]);
+  }, [clearClientAuth, navigate]);
 
   const logout = useCallback(async () => {
     try {
@@ -51,32 +58,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setAccessTokenState(token);
     });
     registerOnUnauthenticated(() => {
+      if (isInitializingRef.current) {
+        clearClientAuth();
+        return;
+      }
+
       handleClientLogout();
     });
-  }, [handleClientLogout]);
+  }, [clearClientAuth, handleClientLogout]);
 
   // Silent authentication boot check
   useEffect(() => {
     let isMounted = true;
+
     const initializeAuth = async () => {
-      const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-      if (isAuthenticated) {
-        try {
-          // This will trigger the response interceptor automatically if token is missing/expired,
-          // fetching me and refreshing token reactively.
-          const response = await authApi.me();
-          if (isMounted) {
-            setUser(response.user);
-          }
-        } catch (error) {
-          console.error("Failed to restore session:", error);
-          if (isMounted) {
-            handleClientLogout();
-          }
+      isInitializingRef.current = true;
+
+      const hasStoredToken = !!getAccessToken();
+      const hadAuthenticatedSession = localStorage.getItem("isAuthenticated") === "true";
+
+      if (!hasStoredToken && !hadAuthenticatedSession) {
+        if (isMounted) {
+          setIsLoading(false);
         }
+        isInitializingRef.current = false;
+        return;
       }
-      if (isMounted) {
-        setIsLoading(false);
+
+      try {
+        if (!hasStoredToken && hadAuthenticatedSession) {
+          await refreshAccessToken();
+        }
+
+        const response = await authApi.me();
+        if (isMounted) {
+          setUser(response.user);
+          localStorage.setItem("isAuthenticated", "true");
+          localStorage.setItem("userName", response.user.name);
+          localStorage.setItem("email", response.user.email);
+        }
+      } catch (error) {
+        console.error("Failed to restore session:", error);
+        if (isMounted) {
+          clearClientAuth();
+        }
+      } finally {
+        isInitializingRef.current = false;
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -84,7 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       isMounted = false;
     };
-  }, [handleClientLogout]);
+  }, [clearClientAuth]);
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await authApi.login({ email, password });

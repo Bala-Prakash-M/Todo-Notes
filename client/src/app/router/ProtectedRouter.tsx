@@ -10,9 +10,8 @@ export function ProtectedRoute({
   children,
 }: ProtectedRouteProps) {
   const { user, accessToken, isLoading } = useAuthContext();
-  const isAuthenticatedFlag = localStorage.getItem("isAuthenticated") === "true";
 
-  if (isLoading || (isAuthenticatedFlag && (!accessToken || !user))) {
+  if (isLoading) {
     return (
       <div className="min-h-screen w-full bg-[#e9ecf0] flex flex-col items-center justify-center font-['Plus_Jakarta_Sans'] select-none">
         <div className="flex flex-col items-center gap-4">
