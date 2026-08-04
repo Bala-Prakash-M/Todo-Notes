@@ -42,7 +42,9 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
 }) => {
   // Local edit states
   const [title, setTitle] = useState("");
-  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "unsaved" | "error">("saved");
+  const [saveStatus, setSaveStatus] = useState<
+    "saved" | "saving" | "unsaved" | "error"
+  >("saved");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -101,9 +103,9 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
       const prevId = currentNoteIdRef.current;
       const prevTitle = titleRef.current;
       const prevContent = contentRef.current;
-      
+
       // Save instantly
-      onSave(prevId, prevTitle, prevContent).catch(err => {
+      onSave(prevId, prevTitle, prevContent).catch((err) => {
         console.error("Autosave failed on note switch:", err);
       });
       isDirtyRef.current = false;
@@ -146,7 +148,11 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
       }
       if (currentNoteIdRef.current && isDirtyRef.current) {
         // Fallback save on unmount
-        onSave(currentNoteIdRef.current, titleRef.current, contentRef.current).catch(err => {
+        onSave(
+          currentNoteIdRef.current,
+          titleRef.current,
+          contentRef.current,
+        ).catch((err) => {
           console.error("Autosave failed on unmount:", err);
         });
       }
@@ -180,7 +186,7 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
       const activeContent = contentRef.current;
 
       await onSave(activeId, activeTitle, activeContent);
-      
+
       // Ensure we only clear dirty flag if note context hasn't shifted during the promise resolution
       if (currentNoteIdRef.current === activeId) {
         isDirtyRef.current = false;
@@ -201,7 +207,11 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
 
   const handleDeleteClick = () => {
     if (note) {
-      if (confirm(`Are you sure you want to delete this note "${title || "Untitled"}"?`)) {
+      if (
+        confirm(
+          `Are you sure you want to delete this note "${title || "Untitled"}"?`,
+        )
+      ) {
         onDelete(note.id);
         setIsMenuOpen(false);
       }
@@ -252,8 +262,19 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         <div className="absolute inset-0 opacity-[0.015] pointer-events-none select-none mix-blend-multiply">
           <svg width="100%" height="100%">
             <defs>
-              <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
-                <path d="M 24 0 L 0 0 0 24" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="1.5 2.5" />
+              <pattern
+                id="grid"
+                width="24"
+                height="24"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M 24 0 L 0 0 0 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeDasharray="1.5 2.5"
+                />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
@@ -268,7 +289,8 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             Select a note to continue
           </h2>
           <p className="text-xs text-slate-400 mt-1.5 leading-relaxed max-w-[240px] font-sans">
-            Choose a note from the left panel to start writing, or create a new note in your active space.
+            Choose a note from the left panel to start writing, or create a new
+            note in your active space.
           </p>
         </div>
       </main>
@@ -308,9 +330,17 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
           <button
             onClick={onToggleDistractionFree}
             className="hidden rounded-xl p-2 text-slate-400 transition-colors duration-300 hover:bg-slate-50 hover:text-slate-700 md:block cursor-pointer"
-            title={isDistractionFree ? "Exit Distraction Free" : "Distraction Free Mode"}
+            title={
+              isDistractionFree
+                ? "Exit Distraction Free"
+                : "Distraction Free Mode"
+            }
           >
-            {isDistractionFree ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+            {isDistractionFree ? (
+              <Minimize2 className="h-4 w-4" />
+            ) : (
+              <Maximize2 className="h-4 w-4" />
+            )}
           </button>
 
           {/* Action Menu (Delete, etc.) */}
@@ -318,7 +348,9 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`rounded-xl p-2 transition-all duration-300 cursor-pointer ${
-                isMenuOpen ? "bg-slate-50 text-slate-700" : "text-slate-400 hover:bg-slate-50 hover:text-slate-700"
+                isMenuOpen
+                  ? "bg-slate-50 text-slate-700"
+                  : "text-slate-400 hover:bg-slate-50 hover:text-slate-700"
               }`}
             >
               <MoreVertical className="h-4 w-4" />
@@ -343,30 +375,28 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
 
       {/* Editor Canvas Writing Container */}
       {/* 1. Full-width outer scroll container */}
-<div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-  
-  {/* 2. Inner constrained container for comfortable reading */}
-  <div className="mx-auto w-full max-w-3xl px-6 py-8 sm:px-10 sm:py-12">
-    <div className="mb-8 flex flex-col gap-3">
-      <div className="flex items-center gap-2 font-mono text-[9px] font-bold uppercase tracking-widest text-slate-400">
-        <Feather className="h-3 w-3 opacity-60" />
+      <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {/* 2. Inner constrained container for comfortable reading */}
+        <div className="mx-auto w-full max-w-3xl px-6 py-8 sm:px-10 sm:py-12">
+          <div className="mb-8 flex flex-col gap-3">
+            <div className="flex items-center gap-2 font-mono text-[9px] font-bold uppercase tracking-widest text-slate-400">
+              <Feather className="h-3 w-3 opacity-60" />
+            </div>
+
+            <input
+              type="text"
+              value={title}
+              onChange={handleTitleChange}
+              className="w-full border-none bg-transparent p-0 font-serif text-2xl font-normal tracking-tight text-slate-900 outline-none placeholder:text-slate-200 focus:ring-0 sm:text-4xl"
+              placeholder="Untitled Reflection"
+            />
+          </div>
+
+          <div className="relative w-full max-w-none select-text prose prose-slate">
+            <EditorContent editor={editor} />
+          </div>
+        </div>
       </div>
-
-      <input
-        type="text"
-        value={title}
-        onChange={handleTitleChange}
-        className="w-full border-none bg-transparent p-0 font-serif text-2xl font-normal tracking-tight text-slate-900 outline-none placeholder:text-slate-200 focus:ring-0 sm:text-4xl"
-        placeholder="Untitled Reflection"
-      />
-    </div>
-
-    <div className="relative w-full max-w-none select-text prose prose-slate">
-      <EditorContent editor={editor} />
-    </div>
-  </div>
-
-</div>
     </main>
   );
 };
