@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, type CookieOptions } from "express";
 import { AppError } from "../../shared/errors/app-error.js";
 import { ErrorHandler } from "../../shared/errors/error.handler.js";
 import { AuthService } from "./auth.service.js";
@@ -11,13 +11,29 @@ export class AuthController {
     private readonly errorHandler: ErrorHandler,
   ) {}
 
-  private setRefreshCookie(res: Response, refreshToken: string): void {
-    res.cookie("refreshToken", refreshToken, {
+  private getRefreshCookieOptions(req: Request): CookieOptions {
+    const isHttps =
+      process.env.NODE_ENV === "production" ||
+      req.secure ||
+      req.headers["x-forwarded-proto"] === "https";
+
+    return {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: isHttps,
+      sameSite: isHttps ? "none" : "lax",
+      path: "/",
+    };
+  }
+
+  private setRefreshCookie(req: Request, res: Response, refreshToken: string): void {
+    res.cookie("refreshToken", refreshToken, {
+      ...this.getRefreshCookieOptions(req),
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
+  }
+
+  private clearRefreshCookie(req: Request, res: Response): void {
+    res.clearCookie("refreshToken", this.getRefreshCookieOptions(req));
   }
   
   me = async (req: Request, res: Response): Promise<void> => {
@@ -46,7 +62,7 @@ export class AuthController {
 
       const result = await this.authService.register(userData);
 
-      this.setRefreshCookie(res, result.refreshToken);
+      this.setRefreshCookie(req, res, result.refreshToken);
 
       res.status(201).json({
         accessToken: result.accessToken,
@@ -65,7 +81,7 @@ export class AuthController {
 
       const result = await this.authService.login(credentials);
 
-      this.setRefreshCookie(res, result.refreshToken);
+      this.setRefreshCookie(req, res, result.refreshToken);
 
       res.status(200).json({
         message: "Login successful",
@@ -107,11 +123,7 @@ export class AuthController {
         await this.authService.logout(refreshToken);
       }
 
-      res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-      });
+      this.clearRefreshCookie(req, res);
 
       res.status(200).json({
         message: "Logged out successfully",
@@ -130,17 +142,7 @@ export class AuthController {
         await this.authService.logoutAll(refreshToken);
       }
 
-      const isHttps =
-        process.env.NODE_ENV === "production" ||
-        req.secure ||
-        req.headers["x-forwarded-proto"] === "https";
-
-      res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: isHttps,
-        sameSite: isHttps ? "none" : "lax",
-        path: "/",
-      });
+      this.clearRefreshCookie(req, res);
 
       res.status(200).json({
         message: "Logged out of all devices successfully",

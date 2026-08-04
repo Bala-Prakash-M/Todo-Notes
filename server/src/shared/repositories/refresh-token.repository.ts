@@ -31,7 +31,7 @@ export class RefreshTokenRepository {
   delete = async (
     sessionId: string
   ) => {
-    return prisma.refreshToken.delete({
+    return prisma.refreshToken.deleteMany({
       where: {
         sessionId,
       },

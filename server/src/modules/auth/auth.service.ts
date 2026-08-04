@@ -170,19 +170,19 @@ export class AuthService {
 
   async logout(refreshToken: string) {
     try {
-      const payload = this.JwtUtils.verifyRefreshToken(refreshToken);
+      const payload = this.JwtUtils.verifyRefreshToken(refreshToken, true);
       await this.RefreshTokenRepository.delete(payload.sessionId);
-    } catch {
-      // Ignore token verification errors during logout
+    } catch (error) {
+      console.error("Logout cleanup failed:", error);
     }
   }
 
   async logoutAll(refreshToken: string) {
     try {
-      const payload = this.JwtUtils.verifyRefreshToken(refreshToken);
+      const payload = this.JwtUtils.verifyRefreshToken(refreshToken, true);
       await this.RefreshTokenRepository.deleteAllByUser(payload.userId);
-    } catch {
-      // Ignore token verification errors during logout
+    } catch (error) {
+      console.error("Logout-all cleanup failed:", error);
     }
   }
 }

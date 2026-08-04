@@ -1,4 +1,4 @@
-import jwt, { type SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { z } from "zod";
 import type { StringValue } from "ms";
 
@@ -66,8 +66,9 @@ export class JwtUtils {
     token: string,
     secret: string,
     schema: z.ZodType<T>,
+    ignoreExpiration = false,
   ): T {
-    const decoded = jwt.verify(token, secret);
+    const decoded = jwt.verify(token, secret, { ignoreExpiration });
 
     const payload = schema.safeParse(decoded);
 
@@ -100,7 +101,15 @@ export class JwtUtils {
     return this.verify(token, JWT_ACCESS_SECRET, AccessTokenPayloadSchema);
   }
 
-  verifyRefreshToken(token: string): RefreshTokenPayload {
-    return this.verify(token, JWT_REFRESH_SECRET, RefreshTokenPayloadSchema);
+  verifyRefreshToken(
+    token: string,
+    ignoreExpiration = false,
+  ): RefreshTokenPayload {
+    return this.verify(
+      token,
+      JWT_REFRESH_SECRET,
+      RefreshTokenPayloadSchema,
+      ignoreExpiration,
+    );
   }
 }
