@@ -15,6 +15,7 @@ interface AuthContextType {
   user: User | null;
   accessToken: string | null;
   isLoading: boolean;
+  isLoggingOut: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -27,6 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessTokenState] = useState<string | null>(() => getAccessToken());
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
   const isInitializingRef = useRef(true);
 
@@ -40,8 +42,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const handleClientLogout = useCallback(() => {
+    setIsLoggingOut(true);
     clearClientAuth();
-    navigate("/");
+    navigate("/", { replace: true });
   }, [clearClientAuth, navigate]);
 
   const logout = useCallback(async () => {
@@ -92,6 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!hasStoredToken && !hadAuthenticatedSession) {
         if (isMounted) {
           setIsLoading(false);
+          setIsLoggingOut(false);
         }
         isInitializingRef.current = false;
         return;
@@ -105,6 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const response = await authApi.me();
         if (isMounted) {
           setUser(response.user);
+          setIsLoggingOut(false);
           localStorage.setItem("isAuthenticated", "true");
           localStorage.setItem("userName", response.user.name);
           localStorage.setItem("email", response.user.email);
@@ -113,6 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error("Failed to restore session:", error);
         if (isMounted) {
           clearClientAuth();
+          setIsLoggingOut(false);
         }
       } finally {
         isInitializingRef.current = false;
@@ -143,6 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     apiSetAccessToken(response.accessToken);
     setAccessTokenState(response.accessToken);
     setUser(response.user);
+    setIsLoggingOut(false);
   }, []);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
@@ -156,6 +163,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     apiSetAccessToken(response.accessToken);
     setAccessTokenState(response.accessToken);
     setUser(response.user);
+    setIsLoggingOut(false);
   }, []);
 
   return (
@@ -164,6 +172,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         accessToken,
         isLoading,
+        isLoggingOut,
         login,
         register,
         logout,
