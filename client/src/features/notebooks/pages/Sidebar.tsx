@@ -6,12 +6,13 @@ import {
   Briefcase,
   Share2,
   Settings,
-  RefreshCw,
   Folder,
   X,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import useScreenSize from "../../../shared/hooks/useScreenSize";
 import { useAuthContext } from "../../../app/providers/AuthContext";
+import LogoutButton from "../../../shared/components/LogoutButton";
 
 type SidebarProps = {
   currentView: string;
@@ -26,10 +27,21 @@ const Sidebar = ({
   isMobileSidebarOpen,
   setIsMobileSidebarOpen,
 }: SidebarProps) => {
-  const { user } = useAuthContext();
+  const navigate = useNavigate();
+  const { user, logout, logoutAll } = useAuthContext();
   const userName = user?.name || "Anastasia";
   const email = user?.email || "anastasia@icylab.co";
   const { isMobile, isDesktop, isPad } = useScreenSize();
+
+  const handleLogoutThisDevice = async () => {
+    await logout();
+    navigate("/", { replace: true });
+  };
+
+  const handleLogoutAllDevices = async () => {
+    await logoutAll();
+    navigate("/", { replace: true });
+  };
 
   return (
     <>
@@ -268,13 +280,10 @@ const Sidebar = ({
               <Settings className="w-3.5 h-3.5 transition-transform duration-500 group-hover:rotate-45" />
               <span>Settings</span>
             </button>
-            <button
-              type="button"
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-400 hover:text-slate-700 hover:bg-slate-50/50 rounded-xl transition-all duration-200 group"
-            >
-              <RefreshCw className="w-3.5 h-3.5 transition-transform duration-500 group-hover:rotate-180" />
-              <span>Sync Status</span>
-            </button>
+            <LogoutButton
+              onLogoutThisDevice={handleLogoutThisDevice}
+              onLogoutAllDevices={handleLogoutAllDevices}
+            />
           </div>
         </aside>
       )}
@@ -359,6 +368,12 @@ const Sidebar = ({
                   </button>
                 </div>
               </nav>
+            </div>
+            <div className="pt-4 border-t border-slate-100 font-['Plus_Jakarta_Sans']">
+              <LogoutButton
+                onLogoutThisDevice={handleLogoutThisDevice}
+                onLogoutAllDevices={handleLogoutAllDevices}
+              />
             </div>
           </aside>
         </>

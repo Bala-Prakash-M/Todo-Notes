@@ -10,6 +10,7 @@ import {
   registerOnUnauthenticated,
 } from "../../services/api";
 
+
 interface AuthContextType {
   user: User | null;
   accessToken: string | null;
@@ -17,6 +18,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  logoutAll: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleClientLogout = useCallback(() => {
     clearClientAuth();
-    navigate("/auth");
+    navigate("/");
   }, [clearClientAuth, navigate]);
 
   const logout = useCallback(async () => {
@@ -47,6 +49,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await authApi.logout();
     } catch (error) {
       console.error("Logout request failed:", error);
+    } finally {
+      handleClientLogout();
+    }
+  }, [handleClientLogout]);
+
+  const logoutAll = useCallback(async () => {
+    try {
+      await authApi.logoutAll();
+    } catch (error) {
+      console.error("Logout all devices request failed:", error);
     } finally {
       handleClientLogout();
     }
@@ -118,12 +130,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await authApi.login({ email, password });
-    
+
     // Set localStorage flag and sync context + api
     localStorage.setItem("isAuthenticated", "true");
     localStorage.setItem("userName", response.user.name);
     localStorage.setItem("email", response.user.email);
-    
+    // Set localStorage flag and sync context + api
+    localStorage.setItem("isAuthenticated", "true");
+    localStorage.setItem("userName", response.user.name);
+    localStorage.setItem("email", response.user.email);
+
     apiSetAccessToken(response.accessToken);
     setAccessTokenState(response.accessToken);
     setUser(response.user);
@@ -131,12 +147,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = useCallback(async (name: string, email: string, password: string) => {
     const response = await authApi.register({ name, email, password });
-    
+
     // Set localStorage flag and sync context + api
     localStorage.setItem("isAuthenticated", "true");
     localStorage.setItem("userName", response.user.name);
     localStorage.setItem("email", response.user.email);
-    
+
     apiSetAccessToken(response.accessToken);
     setAccessTokenState(response.accessToken);
     setUser(response.user);
@@ -151,6 +167,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         register,
         logout,
+        logoutAll,
       }}
     >
       {children}

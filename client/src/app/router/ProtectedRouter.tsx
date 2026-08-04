@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({
   children,
 }: ProtectedRouteProps) {
-  const { user, accessToken, isLoading } = useAuthContext();
+  const { user, accessToken, isLoading, isLoggingOut } = useAuthContext();
 
   if (isLoading) {
     return (
@@ -27,7 +27,7 @@ export function ProtectedRoute({
   if (!accessToken || !user) {
     return (
       <Navigate
-        to="/auth"
+        to={isLoggingOut ? "/" : "/auth"}
         replace
       />
     );

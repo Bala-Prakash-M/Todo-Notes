@@ -176,6 +176,15 @@ export class AuthService {
       // Ignore token verification errors during logout
     }
   }
+
+  async logoutAll(refreshToken: string) {
+    try {
+      const payload = this.JwtUtils.verifyRefreshToken(refreshToken);
+      await this.RefreshTokenRepository.deleteAllByUser(payload.userId);
+    } catch {
+      // Ignore token verification errors during logout
+    }
+  }
 }
 
 

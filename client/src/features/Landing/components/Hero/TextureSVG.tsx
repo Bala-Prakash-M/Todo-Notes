@@ -1,32 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { TextureSVGContent } from "./TextureSVGContent";
 import { TheArchive } from "../TheArchive";
 import { TheManifesto } from "../TheManifesto";
 import { ControlHub } from "../../../../shared/components/ControlHub";
 import { Footer } from "../Footer";
 
-
 export const TextureSVG: React.FC = () => {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const textOpacity = Math.max(1 - scrollY / 700, 0);
+  const { scrollY } = useScroll();
+  const textOpacity = useTransform(scrollY, [0, 700], [1, 0]);
 
   return (
     <div className="relative w-full bg-[#eceef2] font-sans antialiased">
       <ControlHub />
-      {/* =========================================================
-          SECTION 1: THE GRAVITATIONAL SINGULARITY CANVASES
-          ========================================================= */}
       <div className="relative h-[105vh] w-full overflow-hidden">
-        {/* CHANGED: Swapped static parent tracking for a multi-layered kinetic stack.
-      The wrapper maintains a micro breathing cycle while child rings handle independent vorticity.
-  */}
         <div className="absolute inset-0 z-0 pointer-events-none transform-gpu scale-[1.1] animate-[vortex-breathing_16s_ease-in-out_infinite]">
           <svg
             className="w-full h-full object-cover object-center"
@@ -99,16 +86,8 @@ export const TextureSVG: React.FC = () => {
               </filter>
             </defs>
 
-            {/* Base Universe Plate Material */}
             <rect width="1000" height="1000" fill="#eceef2" />
 
-            {/* =========================================================
-          CONCENTRIC HYPNOTIC VORTEX COILS
-          - Centered exactly on the (500, 500) coordinate grid.
-          - Each layer possesses individual class tracking for variable rotational speeds.
-          ========================================================= */}
-
-            {/* Spacetime Distortion Field - Layer 1 (Outer Horizon - Slow Drag) */}
             <path
               className="origin-center transform-gpu animate-[orbit-slow_28s_linear_infinite]"
               d="M 500 50 
@@ -120,7 +99,6 @@ export const TextureSVG: React.FC = () => {
               filter="url(#singularity-depth)"
             />
 
-            {/* Spacetime Distortion Field - Layer 2 (Ergosphere Threshold - Counter Swirl) */}
             <path
               className="origin-center transform-gpu animate-[orbit-reverse_20s_linear_infinite]"
               d="M 500 160 
@@ -132,7 +110,6 @@ export const TextureSVG: React.FC = () => {
               filter="url(#singularity-depth)"
             />
 
-            {/* Spacetime Distortion Field - Layer 3 (Event Horizon Capture - Accelerated Cascade) */}
             <path
               className="origin-center transform-gpu animate-[orbit-medium_14s_linear_infinite]"
               d="M 500 280 
@@ -143,55 +120,43 @@ export const TextureSVG: React.FC = () => {
               fill="#cbd4df"
               filter="url(#singularity-depth)"
             />
-
-            {/* REMOVED: Innermost singularity circle path block to establish complete negative space freedom */}
           </svg>
         </div>
 
-        {/* MIST HORIZON DISCOVERABLE BLEND */}
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#eceef2] to-transparent z-10 pointer-events-none" />
 
-        {/* MID-SCREEN SUSPENDED MANUSCRIPT LAYOUT */}
-        <div
+        <motion.div
           className="relative z-20 mx-auto max-w-7xl px-8 sm:px-16 lg:px-24 flex flex-col h-full transition-opacity duration-500 ease-out"
           style={{ opacity: textOpacity }}
         >
           <main className="h-full flex items-center justify-center">
             <div className="w-full max-w-xl animate-[fadeIn_2.2s_ease-out_both]">
-              <TextureSVGContent/>
+              <TextureSVGContent />
             </div>
           </main>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Global CSS Kinetic Class Injector */}
       <style>{`
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        /* Hypnotic Vortex Calibration Engine */
         @keyframes orbit-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes orbit-medium { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes orbit-fast { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
-        /* Counter-Rotation layer generates spatial friction to enhance depth trickery */
         @keyframes orbit-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
-        
-        /* Breathes the viewport scale back and forth to keep the lines fluid */
         @keyframes vortex-breathing {
           0%, 100% { transform: scale(1.04) translate3d(0, 0, 0); }
           50% { transform: scale(1.07) translate3d(2px, -3px, 0); }
-          /* Add this inside your <style> tag to protect mobile performance */
-@media (max-width: 768px) {
-  svg path {
-    /* Turns off complex filter blurs on smaller mobile processors */
-    filter: none !important; 
-  }
-  @keyframes vortex-breathing {
-    /* Simplify breathing on mobile to reduce rendering pressure */
-    0%, 100% { transform: scale(1.04); }
-    50% { transform: scale(1.06); }
-  }
-}
+        }
+
+        @media (max-width: 768px) {
+          svg path {
+            filter: none !important;
+          }
+
+          @keyframes vortex-breathing {
+            0%, 100% { transform: scale(1.04); }
+            50% { transform: scale(1.06); }
+          }
         }
       `}</style>
       <TheArchive />

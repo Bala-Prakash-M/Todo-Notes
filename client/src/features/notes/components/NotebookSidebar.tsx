@@ -9,7 +9,6 @@ import {
   Edit2,
   ChevronLeft,
   Settings,
-  RefreshCw,
 } from "lucide-react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import type { Variants } from "framer-motion";
@@ -17,6 +16,7 @@ import useNotebook from "../../notebooks/hooks/notebook.hook";
 import { CreateNotebookModal } from "../../notebooks/components/CreateNotebookPopup";
 import useScreenSize from "../../../shared/hooks/useScreenSize";
 import { useAuthContext } from "../../../app/providers/AuthContext";
+import LogoutButton from "../../../shared/components/LogoutButton";
 
 interface NotebookSidebarProps {
   onToggleCollapse?: () => void;
@@ -64,7 +64,7 @@ export const NotebookSidebar: React.FC<NotebookSidebarProps> = ({
   const navigate = useNavigate();
   const { notebookId } = useParams<{ notebookId: string }>();
   const { isMobile } = useScreenSize();
-  const { user } = useAuthContext();
+  const { user, logout, logoutAll } = useAuthContext();
   const userName = user?.name || "Anastasia";
   const email = user?.email || "anastasia@icylab.co";
 
@@ -138,6 +138,16 @@ export const NotebookSidebar: React.FC<NotebookSidebarProps> = ({
         console.error(err);
       }
     }
+  };
+
+  const handleLogoutThisDevice = async () => {
+    await logout();
+    navigate("/", { replace: true });
+  };
+
+  const handleLogoutAllDevices = async () => {
+    await logoutAll();
+    navigate("/", { replace: true });
   };
 
   return (
@@ -447,16 +457,16 @@ export const NotebookSidebar: React.FC<NotebookSidebarProps> = ({
             opacity: { duration: 0.16, ease: "easeOut" },
             x: { duration: 0.24, ease: [0.22, 1, 0.36, 1] },
           }}
-          className="p-3.5 border-t border-slate-200/40 shrink-0 relative z-10 space-y-0.5 bg-slate-50/50 w-64"
+          className="p-3.5 border-t border-slate-200/40 shrink-0 relative z-10 space-y-1 bg-slate-50/50 w-64 font-['Plus_Jakarta_Sans']"
         >
           <div className="flex items-center gap-2.5 text-[10px] font-semibold text-slate-400 hover:text-slate-700 hover:bg-slate-200/30 rounded-lg py-1.5 px-2 transition-colors cursor-default">
             <Settings className="w-3.5 h-3.5 text-slate-400" />
             <span>System Settings</span>
           </div>
-          <div className="flex items-center gap-2.5 text-[10px] font-semibold text-slate-400 rounded-lg py-1.5 px-2 cursor-default">
-            <RefreshCw className="w-3.5 h-3.5 text-emerald-500/80 tracking-wide" />
-            <span>All Sync Completed</span>
-          </div>
+          <LogoutButton
+            onLogoutThisDevice={handleLogoutThisDevice}
+            onLogoutAllDevices={handleLogoutAllDevices}
+          />
         </motion.div>
 
         {/* Notebook Creation Modal */}
