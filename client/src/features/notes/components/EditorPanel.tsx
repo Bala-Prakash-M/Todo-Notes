@@ -342,25 +342,31 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
       {editor && <BubbleMenus editor={editor} />}
 
       {/* Editor Canvas Writing Container */}
-      <div className="mx-auto flex-1 min-h-0 w-full max-w-3xl overflow-y-auto overscroll-contain px-4 py-6 sm:px-12 sm:py-10 md:px-16 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="mb-8 flex flex-col gap-3">
-          <div className="flex items-center gap-2 font-mono text-[9px] font-bold uppercase tracking-widest text-slate-400">
-            <Feather className="h-3 w-3 opacity-60" />
-          </div>
-
-          <input
-            type="text"
-            value={title}
-            onChange={handleTitleChange}
-            className="w-full border-none bg-transparent p-0 font-serif text-2xl font-normal tracking-tight text-slate-900 outline-none placeholder:text-slate-200 focus:ring-0 sm:text-4xl"
-            placeholder="Untitled Reflection"
-          />
-        </div>
-
-        <div className="relative w-full max-w-none select-text prose prose-slate">
-          <EditorContent editor={editor} />
-        </div>
+      {/* 1. Full-width outer scroll container */}
+<div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+  
+  {/* 2. Inner constrained container for comfortable reading */}
+  <div className="mx-auto w-full max-w-3xl px-6 py-8 sm:px-10 sm:py-12">
+    <div className="mb-8 flex flex-col gap-3">
+      <div className="flex items-center gap-2 font-mono text-[9px] font-bold uppercase tracking-widest text-slate-400">
+        <Feather className="h-3 w-3 opacity-60" />
       </div>
+
+      <input
+        type="text"
+        value={title}
+        onChange={handleTitleChange}
+        className="w-full border-none bg-transparent p-0 font-serif text-2xl font-normal tracking-tight text-slate-900 outline-none placeholder:text-slate-200 focus:ring-0 sm:text-4xl"
+        placeholder="Untitled Reflection"
+      />
+    </div>
+
+    <div className="relative w-full max-w-none select-text prose prose-slate">
+      <EditorContent editor={editor} />
+    </div>
+  </div>
+
+</div>
     </main>
   );
 };
